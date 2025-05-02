@@ -1,0 +1,28 @@
+name: todaily
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.0-278.2.beta
+
+dependencies:
+  flex_color_scheme: ^8.2.0
+  flutter:
+    sdk: flutter
+  font_awesome_flutter: ^10.8.0
+  google_fonts: ^6.2.1
+  hive_ce: ^2.11.1
+  hive_flutter: ^1.1.0
+  image_picker: ^1.1.2
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  signals: ^6.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^7.0.0
+
+flutter:
+  uses-material-design: true
