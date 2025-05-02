@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// The [AppTheme] defines light and dark themes for the app.
 ///
@@ -37,6 +38,7 @@ abstract final class AppTheme {
     // Direct ThemeData properties.
     visualDensity: VisualDensity.compact,
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
+    fontFamily: GoogleFonts.questrial().fontFamily,
   );
 
   // The FlexColorScheme defined dark mode ThemeData.
@@ -60,5 +62,6 @@ abstract final class AppTheme {
     // Direct ThemeData properties.
     visualDensity: VisualDensity.compact,
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
+    fontFamily: GoogleFonts.questrial().fontFamily,
   );
 }

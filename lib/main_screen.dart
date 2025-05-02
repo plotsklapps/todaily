@@ -11,6 +11,7 @@ class MainScreen extends StatelessWidget {
       length: 3,
       initialIndex: 1,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('todaily'),
           centerTitle: true,
@@ -71,6 +72,10 @@ class MainScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: <Widget>[TodayScreen(), TodayScreen(), TodayScreen()],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: FaIcon(FontAwesomeIcons.floppyDisk),
         ),
       ),
     );

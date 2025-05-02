@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -62,7 +62,10 @@ class _TodayScreenState extends State<TodayScreen> {
             // Title Text Field
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: "today's title"),
+              decoration: const InputDecoration(
+                labelText: "today's title",
+                labelStyle: TextStyle(fontSize: 14),
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -73,6 +76,7 @@ class _TodayScreenState extends State<TodayScreen> {
               maxLength: 220,
               decoration: const InputDecoration(
                 labelText: "today's description",
+                labelStyle: TextStyle(fontSize: 14),
               ),
             ),
 
@@ -150,14 +154,6 @@ class _TodayScreenState extends State<TodayScreen> {
               ],
             ),
             const SizedBox(height: 16),
-
-            // Save Button
-            FilledButton(
-              onPressed: () {
-                // TODO(plotsklapps): Implement save logic here
-              },
-              child: const FaIcon(FontAwesomeIcons.floppyDisk),
-            ),
           ],
         ),
       ),
