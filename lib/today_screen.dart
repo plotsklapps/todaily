@@ -4,7 +4,7 @@ import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:todaily/now_signal.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -16,6 +16,7 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
+  final Now now = Now();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   MoodType _selectedMood = MoodType.neutral;
@@ -42,12 +43,9 @@ class _TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-    final String day = DateFormat('d').format(now);
-    final String suffix = _getSuffix(int.parse(day));
-    final String month = DateFormat('MMMM').format(now);
-    final String year = DateFormat('yyyy').format(now);
-    final String time = DateFormat('HH:mm').format(now);
+    final List<MoodType> firstRowMoods = MoodType.values.sublist(0, 6);
+    final List<MoodType> secondRowMoods = MoodType.values.sublist(6);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
@@ -56,7 +54,13 @@ class _TodayScreenState extends State<TodayScreen> {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[Text('$day$suffix $month $year'), Text(time)],
+              children: <Widget>[
+                Text(
+                  '${now.day.value}${now.suffix.value} ${now.month.value} '
+                  '${now.year.value}',
+                ),
+                Text(now.time.value),
+              ],
             ),
             const SizedBox(height: 8),
             // Title Text Field
@@ -82,38 +86,73 @@ class _TodayScreenState extends State<TodayScreen> {
 
             // Mood Selection
             const Text("today's mood"),
-            const SizedBox(height: 8),
-            Wrap(
-              alignment: WrapAlignment.spaceAround,
-              children:
-                  MoodType.values.map((MoodType mood) {
-                    final bool isSelected = _selectedMood == mood;
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedMood = mood;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration:
-                            isSelected
-                                ? BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.blue,
-                                    width: 2,
-                                  ),
-                                )
-                                : null,
-                        child: Text(
-                          mood.emoji,
-                          style: const TextStyle(fontSize: 30),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+            Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children:
+                      firstRowMoods.map((MoodType mood) {
+                        final bool isSelected = _selectedMood == mood;
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedMood = mood;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration:
+                                isSelected
+                                    ? BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.blue,
+                                        width: 2,
+                                      ),
+                                    )
+                                    : null,
+                            child: Text(
+                              mood.emoji,
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children:
+                      secondRowMoods.map((MoodType mood) {
+                        final bool isSelected = _selectedMood == mood;
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedMood = mood;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration:
+                                isSelected
+                                    ? BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.blue,
+                                        width: 2,
+                                      ),
+                                    )
+                                    : null,
+                            child: Text(
+                              mood.emoji,
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ],
             ),
+            const Text("today's image"),
 
             // Image Selection
             if (_image != null)
@@ -158,22 +197,6 @@ class _TodayScreenState extends State<TodayScreen> {
         ),
       ),
     );
-  }
-
-  String _getSuffix(int day) {
-    if (day >= 11 && day <= 13) {
-      return 'th';
-    }
-    switch (day % 10) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
   }
 }
 

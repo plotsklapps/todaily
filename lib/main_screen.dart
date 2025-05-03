@@ -75,7 +75,7 @@ class MainScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          child: FaIcon(FontAwesomeIcons.floppyDisk),
+          child: const FaIcon(FontAwesomeIcons.floppyDisk),
         ),
       ),
     );
