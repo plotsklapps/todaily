@@ -16,11 +16,15 @@ class MainScreen extends StatelessWidget {
           title: const Text('todaily'),
           centerTitle: true,
           actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+            Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: const FaIcon(FontAwesomeIcons.bars),
+                );
               },
-              icon: const FaIcon(FontAwesomeIcons.bars),
             ),
           ],
           bottom: const TabBar(
@@ -61,12 +65,7 @@ class MainScreen extends StatelessWidget {
               ),
               const Divider(),
               const Spacer(),
-              ListTile(
-                title: const Text('Version 1.0.0'),
-                onTap: () {
-                  // Handle version tap
-                },
-              ),
+              TextButton(onPressed: () {}, child: const Text('Version 1.0.0')),
             ],
           ),
         ),
