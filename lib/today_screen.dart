@@ -3,7 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:todaily/image_signal.dart';
 import 'package:todaily/now_signal.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -20,21 +21,7 @@ class _TodayScreenState extends State<TodayScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   MoodType _selectedMood = MoodType.neutral;
-  Uint8List? _image;
-
-  Future<void> _pickImageWeb() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
-
-    if (pickedFile != null) {
-      final Uint8List imageData = await pickedFile.readAsBytes();
-      setState(() {
-        _image = imageData;
-      });
-    }
-  }
+  final PickImage _pickImage = PickImage();
 
   @override
   void dispose() {
@@ -74,9 +61,9 @@ class _TodayScreenState extends State<TodayScreen> {
               },
             ),
             const Text("today's image"),
-            ImagePreview(image: _image),
+            ImagePreview(image: _pickImage.image.watch(context)),
             const SizedBox(height: 16),
-            ImagePickerButtons(onPickImage: _pickImageWeb),
+            ImagePickerButtons(onPickImage: _pickImage.pickImage),
             const SizedBox(height: 16),
           ],
         ),
@@ -207,16 +194,44 @@ class ImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     if (image == null) return const SizedBox.shrink();
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 160),
-        child: ColoredBox(
-          color: Colors.grey,
-          child: Image.memory(image!, fit: BoxFit.contain),
-        ),
-      ),
+    return FutureBuilder<ImageInfo>(
+      future: _getImageInfo(image!),
+      builder: (BuildContext context, AsyncSnapshot<ImageInfo> snapshot) {
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator();
+        }
+
+        final ImageInfo imageInfo = snapshot.data!;
+        final bool isPortrait = imageInfo.image.height > imageInfo.image.width;
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: isPortrait ? 300 : 160,
+              maxWidth: isPortrait ? 160 : 300,
+            ),
+            child: ColoredBox(
+              color: Colors.grey,
+              child: Image.memory(image!, fit: BoxFit.contain),
+            ),
+          ),
+        );
+      },
     );
+  }
+
+  Future<ImageInfo> _getImageInfo(Uint8List imageData) async {
+    final Completer<ImageInfo> completer = Completer<ImageInfo>();
+    final Image image = Image.memory(imageData);
+    image.image
+        .resolve(ImageConfiguration.empty)
+        .addListener(
+          ImageStreamListener((ImageInfo info, _) {
+            completer.complete(info);
+          }),
+        );
+    return completer.future;
   }
 }
 
@@ -238,7 +253,7 @@ class ImagePickerButtons extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {}, // Placeholder for camera functionality
+            onPressed: () {},
             child: const FaIcon(FontAwesomeIcons.camera),
           ),
         ),
