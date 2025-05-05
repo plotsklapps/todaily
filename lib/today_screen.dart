@@ -20,7 +20,7 @@ class _TodayScreenState extends State<TodayScreen> {
   final Now now = Now();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  MoodType _selectedMood = MoodType.neutral;
+  MoodType _selectedMood = MoodType.relaxed;
   final PickImage _pickImage = PickImage();
 
   @override
@@ -124,64 +124,46 @@ class MoodSelection extends StatelessWidget {
     required this.onMoodSelected,
     super.key,
   });
+
   final MoodType selectedMood;
   final ValueChanged<MoodType> onMoodSelected;
 
   @override
   Widget build(BuildContext context) {
-    final List<MoodType> firstRowMoods = MoodType.values.sublist(0, 6);
-    final List<MoodType> secondRowMoods = MoodType.values.sublist(6);
+    return SizedBox(
+      height: 80,
+      child: CarouselView(
+        itemExtent: 100,
+        itemSnapping: true,
+        onTap: (int index) {
+          onMoodSelected(MoodType.values[index]);
+        },
+        children:
+            MoodType.values.map((MoodType mood) {
+              final bool isSelected = selectedMood == mood;
 
-    return Column(
-      children: <Widget>[
-        MoodRow(
-          moods: firstRowMoods,
-          selectedMood: selectedMood,
-          onMoodSelected: onMoodSelected,
-        ),
-        MoodRow(
-          moods: secondRowMoods,
-          selectedMood: selectedMood,
-          onMoodSelected: onMoodSelected,
-        ),
-      ],
-    );
-  }
-}
-
-class MoodRow extends StatelessWidget {
-  const MoodRow({
-    required this.moods,
-    required this.selectedMood,
-    required this.onMoodSelected,
-    super.key,
-  });
-  final List<MoodType> moods;
-  final MoodType selectedMood;
-  final ValueChanged<MoodType> onMoodSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children:
-          moods.map((MoodType mood) {
-            final bool isSelected = selectedMood == mood;
-            return InkWell(
-              onTap: () => onMoodSelected(mood),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration:
-                    isSelected
-                        ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.blue, width: 2),
-                        )
-                        : null,
-                child: Text(mood.emoji, style: const TextStyle(fontSize: 30)),
-              ),
-            );
-          }).toList(),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  FaIcon(
+                    mood.icon,
+                    color:
+                        isSelected
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    mood.name,
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+      ),
     );
   }
 }
@@ -263,20 +245,20 @@ class ImagePickerButtons extends StatelessWidget {
 }
 
 enum MoodType {
-  angry('😠'),
-  sad('😢'),
-  neutral('😐'),
-  relaxed('😌'),
-  happy('😄'),
-  excited('🤩'),
-  confused('😕'),
-  surprised('😲'),
-  sick('🤢'),
-  sleepy('😴'),
-  loving('😍'),
-  worried('😟');
+  angry(FontAwesomeIcons.faceAngry),
+  sad(FontAwesomeIcons.faceSadTear),
+  neutral(FontAwesomeIcons.faceMeh),
+  relaxed(FontAwesomeIcons.faceSmile),
+  happy(FontAwesomeIcons.faceGrin),
+  excited(FontAwesomeIcons.faceGrinStars),
+  confused(FontAwesomeIcons.faceFlushed),
+  surprised(FontAwesomeIcons.faceSurprise),
+  sick(FontAwesomeIcons.faceDizzy),
+  sleepy(FontAwesomeIcons.faceTired),
+  loving(FontAwesomeIcons.faceKiss),
+  worried(FontAwesomeIcons.faceFrownOpen);
 
-  const MoodType(this.emoji);
+  const MoodType(this.icon);
 
-  final String emoji;
+  final IconData icon;
 }
