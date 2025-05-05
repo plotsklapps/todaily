@@ -40,51 +40,67 @@ class MainScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               const DrawerHeader(child: Center(child: Text('todaily'))),
-              Theme(
-                data: cThemeData.value.copyWith(
-                  dividerColor: Colors.transparent,
-                ),
-                child: const ExpansionTile(
-                  leading: FaIcon(FontAwesomeIcons.gear),
-                  title: Text('Settings'),
-                  subtitle: Text('Customize your experience'),
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(left: 24),
-                      child: ExpansionTile(
-                        leading: FaIcon(FontAwesomeIcons.palette),
-                        title: Text('Theme', style: TextStyle(fontSize: 12)),
-                        subtitle: Text(
-                          'Change your theme',
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        children: <Widget>[ThemeCarousel(), FontCarousel()],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      const ExpansionTile(
+                        leading: FaIcon(FontAwesomeIcons.gear),
+                        title: Text('Settings'),
+                        subtitle: Text('Customize your experience'),
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(left: 24),
+                            child: ExpansionTile(
+                              leading: FaIcon(FontAwesomeIcons.palette),
+                              title: Text(
+                                'Theme',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              subtitle: Text(
+                                'Change your theme',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                              children: <Widget>[
+                                ThemeModeCarousel(),
+                                ThemeColorsCarousel(),
+                                ThemeFontCarousel(),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+
+                      ListTile(
+                        title: const Text('About'),
+                        onTap: () {
+                          // Handle about tap
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Help'),
+                        onTap: () {
+                          // Handle help tap
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Feedback'),
+                        onTap: () {
+                          // Handle feedback tap
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Version'),
+                        onTap: () {
+                          // Handle version update tap
+                        },
+                      ),
+                      const Divider(),
+                    ],
+                  ),
                 ),
               ),
-              ListTile(
-                title: const Text('About'),
-                onTap: () {
-                  // Handle about tap
-                },
-              ),
-              ListTile(
-                title: const Text('Help'),
-                onTap: () {
-                  // Handle help tap
-                },
-              ),
-              ListTile(
-                title: const Text('Feedback'),
-                onTap: () {
-                  // Handle feedback tap
-                },
-              ),
-              const Divider(),
-              const Spacer(),
-              TextButton(onPressed: () {}, child: const Text('Version 1.0.0')),
             ],
           ),
         ),
