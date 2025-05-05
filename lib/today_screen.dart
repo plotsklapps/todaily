@@ -52,6 +52,7 @@ class _TodayScreenState extends State<TodayScreen> {
               maxLength: 220,
             ),
             const Text("today's mood"),
+            const SizedBox(height: 8),
             MoodSelection(
               selectedMood: _selectedMood,
               onMoodSelected: (MoodType mood) {
@@ -60,6 +61,7 @@ class _TodayScreenState extends State<TodayScreen> {
                 });
               },
             ),
+            const SizedBox(height: 8),
             const Text("today's image"),
             ImagePreview(image: _pickImage.image.watch(context)),
             const SizedBox(height: 16),
