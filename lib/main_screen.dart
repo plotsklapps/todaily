@@ -40,47 +40,29 @@ class MainScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               const DrawerHeader(child: Center(child: Text('todaily'))),
-              ExpansionTile(
-                title: const Text('Settings'),
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: ListTile(
-                      title: const Text(
-                        'Account',
-                        style: TextStyle(fontSize: 12),
+              Theme(
+                data: cThemeData.value.copyWith(
+                  dividerColor: Colors.transparent,
+                ),
+                child: const ExpansionTile(
+                  leading: FaIcon(FontAwesomeIcons.gear),
+                  title: Text('Settings'),
+                  subtitle: Text('Customize your experience'),
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(left: 24),
+                      child: ExpansionTile(
+                        leading: FaIcon(FontAwesomeIcons.palette),
+                        title: Text('Theme', style: TextStyle(fontSize: 12)),
+                        subtitle: Text(
+                          'Change your theme',
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        children: <Widget>[ThemeCarousel(), FontCarousel()],
                       ),
-                      onTap: () {
-                        // Handle Account tap
-                      },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: ListTile(
-                      title: const Text(
-                        'Theme',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      onTap: () {
-                        showModalBottomSheet<Widget>(
-                          showDragHandle: true,
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                ThemeCarousel(),
-                                FontCarousel(),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               ListTile(
                 title: const Text('About'),
