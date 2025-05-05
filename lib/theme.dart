@@ -7,16 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Signal for the current theme mode. Defaults to light.
-final Signal<bool> sThemeLight = Signal<bool>(true);
+final Signal<bool> sThemeLight = Signal<bool>(true, debugLabel: 'sThemeLight');
 
 // Signal for the current FlexScheme. Defaults to outerSpace.
 final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
   FlexScheme.outerSpace,
+  debugLabel: 'sFlexScheme',
 );
 
 // Signal for the current font family. Defaults to Questrial.
 final Signal<String> sFont = Signal<String>(
   GoogleFonts.questrial().fontFamily!,
+  debugLabel: 'sFont',
 );
 
 // Computed for the ThemeData. Responds to changes in sThemeLight,
@@ -58,7 +60,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
         cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
         fontFamily: sFont.value,
       );
-});
+}, debugLabel: 'cThemeData');
 
 class ThemeCarousel extends StatelessWidget {
   const ThemeCarousel({super.key});
