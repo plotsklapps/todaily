@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -134,37 +135,55 @@ class MoodSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 80,
-      child: CarouselView(
-        itemExtent: 100,
-        itemSnapping: true,
-        onTap: (int index) {
-          onMoodSelected(MoodType.values[index]);
-        },
-        children:
-            MoodType.values.map((MoodType mood) {
-              final bool isSelected = selectedMood == mood;
+      child: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(
+          scrollbars: false,
+          physics: const BouncingScrollPhysics(),
+          dragDevices: <PointerDeviceKind>{
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.stylus,
+            PointerDeviceKind.trackpad,
+          },
+        ),
+        child: CarouselView(
+          itemExtent: 100,
+          shrinkExtent: 80,
+          itemSnapping: true,
+          onTap: (int index) {
+            onMoodSelected(MoodType.values[index]);
+          },
+          children:
+              MoodType.values.map((MoodType mood) {
+                final bool isSelected = selectedMood == mood;
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FaIcon(
-                    mood.icon,
-                    color:
-                        isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    mood.name,
-                    style: TextStyle(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      mood.icon,
+                      color:
+                          isSelected
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey,
                     ),
-                  ),
-                ],
-              );
-            }).toList(),
+                    const SizedBox(height: 8),
+                    Text(
+                      mood.name,
+                      style: TextStyle(
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        color:
+                            isSelected
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+        ),
       ),
     );
   }

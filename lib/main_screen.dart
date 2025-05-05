@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:todaily/theme.dart';
 import 'package:todaily/today_screen.dart';
 
 class MainScreen extends StatelessWidget {
@@ -39,11 +40,47 @@ class MainScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               const DrawerHeader(child: Center(child: Text('todaily'))),
-              ListTile(
+              ExpansionTile(
                 title: const Text('Settings'),
-                onTap: () {
-                  // Handle settings tap
-                },
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: ListTile(
+                      title: const Text(
+                        'Account',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      onTap: () {
+                        // Handle Account tap
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: ListTile(
+                      title: const Text(
+                        'Theme',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      onTap: () {
+                        showModalBottomSheet<Widget>(
+                          showDragHandle: true,
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                ThemeCarousel(),
+                                FontCarousel(),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
               ListTile(
                 title: const Text('About'),

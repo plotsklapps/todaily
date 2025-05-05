@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:todaily/main_screen.dart';
 import 'package:todaily/theme.dart';
 
@@ -13,6 +14,9 @@ class MainEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(theme: AppTheme.light, home: const MainScreen());
+    return MaterialApp(
+      theme: cThemeData.watch(context),
+      home: const MainScreen(),
+    );
   }
 }
