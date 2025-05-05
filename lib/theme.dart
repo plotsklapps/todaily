@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
 
+// Signal for the current ThemeMode. Defaults to system.
 final Signal<ThemeMode> sThemeMode = Signal<ThemeMode>(
   ThemeMode.system,
   debugLabel: 'sThemeMode',
@@ -24,9 +25,10 @@ final Signal<String> sFont = Signal<String>(
   debugLabel: 'sFont',
 );
 
-// Computed for the ThemeData. Responds to changes in platform system,
-// sThemeMode, sFlexScheme, and sFont Signals.
+// Computed for the ThemeData. Responds to changes in sThemeMode, sFlexScheme,
+// and sFont Signals.
 final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
+  // Get the current ThemeMode from platformBrightness. Works on ALL platforms.
   final Brightness platformBrightness =
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
@@ -97,7 +99,7 @@ class ThemeModeCarousel extends StatelessWidget {
       },
     ];
     return SizedBox(
-      height: 132,
+      height: 110,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
           scrollbars: false,
@@ -110,8 +112,8 @@ class ThemeModeCarousel extends StatelessWidget {
           },
         ),
         child: CarouselView(
-          itemExtent: 120,
-          shrinkExtent: 100,
+          itemExtent: 100,
+          shrinkExtent: 60,
           itemSnapping: true,
           onTap: (int index) {
             sThemeMode.value = themeModes[index]['mode'] as ThemeMode;
@@ -152,7 +154,7 @@ class ThemeColorsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 132,
+      height: 110,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
           scrollbars: false,
@@ -165,8 +167,8 @@ class ThemeColorsCarousel extends StatelessWidget {
           },
         ),
         child: CarouselView(
-          itemExtent: 120,
-          shrinkExtent: 100,
+          itemExtent: 100,
+          shrinkExtent: 60,
           itemSnapping: true,
           onTap: (int index) {
             sFlexScheme.value = FlexScheme.values[index];
@@ -180,8 +182,8 @@ class ThemeColorsCarousel extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      height: 80,
-                      width: 80,
+                      height: 64,
+                      width: 64,
                       child: GridView.count(
                         crossAxisCount: 2,
                         padding: EdgeInsets.zero,
@@ -199,6 +201,7 @@ class ThemeColorsCarousel extends StatelessWidget {
                     Text(
                       scheme.name,
                       style: TextStyle(
+                        fontSize: 12,
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
                         color:
@@ -218,8 +221,8 @@ class ThemeColorsCarousel extends StatelessWidget {
 
   Widget _colorBox(Color color) {
     return Container(
-      width: 20,
-      height: 20,
+      width: 12,
+      height: 12,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
@@ -267,7 +270,7 @@ class ThemeFontCarousel extends StatelessWidget {
     ];
 
     return SizedBox(
-      height: 132,
+      height: 110,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
           scrollbars: false,
@@ -280,28 +283,25 @@ class ThemeFontCarousel extends StatelessWidget {
           },
         ),
         child: CarouselView(
-          itemExtent: 120,
-          shrinkExtent: 100,
+          itemExtent: 100,
+          shrinkExtent: 60,
           itemSnapping: true,
           onTap: (int index) {
             sFont.value = fontNames[index];
           },
           children:
               fontNames.map((String fontName) {
-                // Only watch sFont when it's needed for highlighting.
                 final bool isSelected = sFont.watch(context) == fontName;
-
                 final String baseFontName = fontName.split('_')[0];
 
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // Use the current fontName for the "lorem ipsum" text
                     Text(
                       'Lorem ipsum dolor sit amet...',
                       style: TextStyle(
-                        fontFamily: fontName, // Use the current fontName
-                        fontSize: 18,
+                        fontFamily: fontName,
+                        fontSize: 16,
                         color:
                             isSelected
                                 ? Theme.of(context).primaryColor
@@ -314,6 +314,7 @@ class ThemeFontCarousel extends StatelessWidget {
                     Text(
                       baseFontName,
                       style: TextStyle(
+                        fontSize: 12,
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
                         color:
