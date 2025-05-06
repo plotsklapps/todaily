@@ -46,32 +46,56 @@ class MainScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      const ExpansionTile(
-                        leading: FaIcon(FontAwesomeIcons.gear),
-                        title: Text('Settings'),
-                        subtitle: Text('Customize your experience'),
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 24),
-                            child: ExpansionTile(
-                              leading: FaIcon(FontAwesomeIcons.palette),
-                              title: Text(
-                                'Theme',
-                                style: TextStyle(fontSize: 12),
+                      // Remove the Divider from the ExpansionTile.
+                      Theme(
+                        data: Theme.of(
+                          context,
+                        ).copyWith(dividerColor: Colors.transparent),
+                        child: ExpansionTile(
+                          leading: const FaIcon(FontAwesomeIcons.gear),
+                          title: const Text('Settings'),
+                          subtitle: const Text('Customize your experience'),
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24),
+                              child: ExpansionTile(
+                                leading: const FaIcon(FontAwesomeIcons.palette),
+                                title: const Text(
+                                  'Theme',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                subtitle: const Text(
+                                  'Change your theme',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                children: <Widget>[
+                                  const ThemeModeCarousel(),
+                                  const ThemeColorsCarousel(),
+                                  const ThemeFontCarousel(),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                        ),
+                                        child: FilledButton(
+                                          onPressed: () {
+                                            // Save theme settings.
+                                          },
+                                          child: const FaIcon(
+                                            FontAwesomeIcons.floppyDisk,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              subtitle: Text(
-                                'Change your theme',
-                                style: TextStyle(fontSize: 10),
-                              ),
-                              children: <Widget>[
-                                ThemeModeCarousel(),
-                                ThemeColorsCarousel(),
-                                ThemeFontCarousel(),
-                                SizedBox(height: 8),
-                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
 
                       ListTile(
