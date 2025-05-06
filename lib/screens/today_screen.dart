@@ -5,8 +5,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/image_signal.dart';
 import 'package:todaily/now_signal.dart';
+import 'package:todaily/state/image_signal.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/main_screen.dart';
-import 'package:todaily/theme.dart';
+import 'package:todaily/screens/main_screen.dart';
+import 'package:todaily/theme/flex_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

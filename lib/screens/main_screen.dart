@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/theme.dart';
-import 'package:todaily/today_screen.dart';
+import 'package:todaily/screens/today_screen.dart';
+import 'package:todaily/theme/themecolors_carousel.dart';
+import 'package:todaily/theme/themefont_carousel.dart';
+import 'package:todaily/theme/thememode_carousel.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
