@@ -22,6 +22,7 @@ dependencies:
   logger: ^2.5.0
   path_provider: ^2.1.5
   signals: ^6.0.2
+  toastification: ^3.0.2
 
 dev_dependencies:
   flutter_test:

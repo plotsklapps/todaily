@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/hive/hive_settings.dart';
+import 'package:todaily/database/hive_settings.dart';
 import 'package:todaily/screens/today_screen.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
