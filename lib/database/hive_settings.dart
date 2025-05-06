@@ -6,19 +6,18 @@ import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
 import 'package:todaily/theme/thememode_carousel.dart';
 
-void saveThemeSettings() {
+Future<void> saveThemeSettings() async {
   // Get the current values from the Signals and convert them to String.
   final String themeMode = sThemeMode.value.toString();
   final String flexScheme = sFlexScheme.value.name;
   final String font = sFont.value;
 
-  Hive.box<dynamic>('settings')
-    ..put('themeMode', themeMode)
-    ..put('flexScheme', flexScheme)
-    ..put('font', font);
+  await Hive.box<dynamic>('settings').put('themeMode', themeMode);
+  await Hive.box<dynamic>('settings').put('flexScheme', flexScheme);
+  await Hive.box<dynamic>('settings').put('font', font);
 }
 
-void loadThemeSettings() {
+Future<void> loadThemeSettings() async {
   final Box<dynamic> settingsBox = Hive.box('settings');
 
   final String? themeMode = settingsBox.get('themeMode') as String?;
