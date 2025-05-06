@@ -107,7 +107,6 @@ class MainScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-
                         ListTile(
                           title: const Text('About'),
                           onTap: () {
