@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'todailyapp.firebaseapp.com',
     storageBucket: 'todailyapp.firebasestorage.app',
   );
+
 }
