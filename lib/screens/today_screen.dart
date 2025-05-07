@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:todaily/now_signal.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -188,55 +189,65 @@ class ImagePickerGrid extends StatefulWidget {
   const ImagePickerGrid({super.key});
 
   @override
-  State<ImagePickerGrid> createState() => _ImagePickerGridState();
+  State<ImagePickerGrid> createState() {
+    return _ImagePickerGridState();
+  }
 }
 
 class _ImagePickerGridState extends State<ImagePickerGrid> {
   final List<Uint8List?> _images = List<Uint8List?>.filled(4, null);
+  final ImagePicker _picker = ImagePicker();
 
-  void _pickImage(int index) async {
-    // TODO: Implement image picking logic here
-    // For now, simulate picking an image by assigning a placeholder Uint8List
-    final Uint8List placeholderImage = Uint8List(
-      0,
-    ); // Replace with actual image data
-    setState(() {
-      _images[index] = placeholderImage;
-    });
+  Future<void> _pickImage(int index) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery, // You can also use ImageSource.camera
+        maxWidth: 800, // Optional: Resize the image
+        maxHeight: 800,
+      );
+
+      if (pickedFile != null) {
+        final Uint8List imageData = await pickedFile.readAsBytes();
+        setState(() {
+          _images[index] = imageData;
+        });
+      }
+    } on Exception catch (e) {
+      // Handle errors (e.g., user cancels the picker)
+      debugPrint('Error picking image: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: 4,
-      itemBuilder: (BuildContext context, int index) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List<Widget>.generate(4, (int index) {
         return GestureDetector(
           onTap: () {
-            if (_images.where((image) => image != null).length < 4) {
+            if (_images.where((Uint8List? image) => image != null).length < 4) {
               _pickImage(index);
             }
           },
           child: Card(
             elevation: 4,
-            child:
-                _images[index] != null
-                    ? Image.memory(_images[index]!, fit: BoxFit.cover)
-                    : const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.plus,
-                        size: 40,
-                        color: Colors.grey,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width / 5, // Adjust size
+              height: MediaQuery.of(context).size.width / 5,
+              child:
+                  _images[index] != null
+                      ? Image.memory(_images[index]!, fit: BoxFit.cover)
+                      : const Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.plus,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
+            ),
           ),
         );
-      },
+      }),
     );
   }
 }
