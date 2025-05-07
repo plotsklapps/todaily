@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:todaily/now_signal.dart';
+import 'package:todaily/theme/flex_theme.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -61,7 +62,8 @@ class _TodayScreenState extends State<TodayScreen> {
             ),
             const SizedBox(height: 8),
             const Text("today's images"),
-            const ImagePickerGrid(),
+            const SizedBox(height: 8),
+            const ImagePickerRow(),
             const SizedBox(height: 16),
             const SizedBox(height: 16),
           ],
@@ -185,16 +187,16 @@ class MoodSelection extends StatelessWidget {
   }
 }
 
-class ImagePickerGrid extends StatefulWidget {
-  const ImagePickerGrid({super.key});
+class ImagePickerRow extends StatefulWidget {
+  const ImagePickerRow({super.key});
 
   @override
-  State<ImagePickerGrid> createState() {
+  State<ImagePickerRow> createState() {
     return _ImagePickerGridState();
   }
 }
 
-class _ImagePickerGridState extends State<ImagePickerGrid> {
+class _ImagePickerGridState extends State<ImagePickerRow> {
   final List<Uint8List?> _images = List<Uint8List?>.filled(4, null);
   final ImagePicker _picker = ImagePicker();
 
@@ -230,18 +232,16 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
             }
           },
           child: Card(
-            elevation: 4,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width / 5, // Adjust size
-              height: MediaQuery.of(context).size.width / 5,
+              width: MediaQuery.of(context).size.width / 5,
+              height: MediaQuery.of(context).size.width / 6,
               child:
                   _images[index] != null
                       ? Image.memory(_images[index]!, fit: BoxFit.cover)
-                      : const Center(
+                      : Center(
                         child: FaIcon(
-                          FontAwesomeIcons.plus,
-                          size: 40,
-                          color: Colors.grey,
+                          FontAwesomeIcons.fileCirclePlus,
+                          color: cThemeData.value.colorScheme.primary,
                         ),
                       ),
             ),
