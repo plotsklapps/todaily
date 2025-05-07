@@ -203,7 +203,7 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
   Future<void> _pickImage(int index) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery, // You can also use ImageSource.camera
+        source: index == 3 ? ImageSource.camera : ImageSource.gallery,
         maxWidth: 800, // Optional: Resize the image
         maxHeight: 800,
       );
@@ -227,7 +227,8 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
       children: List<Widget>.generate(4, (int index) {
         return GestureDetector(
           onTap: () {
-            if (_images.where((Uint8List? image) => image != null).length < 4) {
+            if (index == 3 ||
+                _images.where((Uint8List? image) => image != null).length < 4) {
               _pickImage(index);
             }
           },
@@ -240,7 +241,10 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                       ? Image.memory(_images[index]!, fit: BoxFit.cover)
                       : Center(
                         child: FaIcon(
-                          FontAwesomeIcons.fileCirclePlus,
+                          index == 3
+                              ? FontAwesomeIcons
+                                  .camera // Camera icon for the fourth card
+                              : FontAwesomeIcons.fileCirclePlus,
                           color: cThemeData.value.colorScheme.primary,
                         ),
                       ),
