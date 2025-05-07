@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/now_signal.dart';
+import 'package:todaily/state/now_signal.dart';
 import 'package:todaily/widgets/imagepicker_widget.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -62,8 +62,6 @@ class _TodayScreenState extends State<TodayScreen> {
             const Text("today's images"),
             const SizedBox(height: 8),
             const ImagePickerRow(),
-            const SizedBox(height: 16),
-            const SizedBox(height: 16),
           ],
         ),
       ),
