@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:toastification/toastification.dart';
 import 'package:todaily/database/hive_settings.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/theme/flex_theme.dart';
@@ -25,9 +26,11 @@ class MainEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: cThemeData.watch(context),
-      home: const MainScreen(),
+    return ToastificationWrapper(
+      child: MaterialApp(
+        theme: cThemeData.watch(context),
+        home: const MainScreen(),
+      ),
     );
   }
 }

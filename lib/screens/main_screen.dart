@@ -41,7 +41,7 @@ class MainScreen extends StatelessWidget {
           children: <Widget>[TodayScreen(), TodayScreen(), TodayScreen()],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () async {},
           child: const FaIcon(FontAwesomeIcons.floppyDisk),
         ),
       ),

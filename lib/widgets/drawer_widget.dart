@@ -36,36 +36,38 @@ class DrawerWidget extends StatelessWidget {
                       data: Theme.of(
                         context,
                       ).copyWith(dividerColor: Colors.transparent),
-                      child: const ExpansionTile(
-                        leading: FaIcon(FontAwesomeIcons.gear),
-                        title: Text('Settings'),
-                        subtitle: Text('Customize your experience'),
+                      child: ExpansionTile(
+                        leading: const FaIcon(FontAwesomeIcons.gear),
+                        title: const Text('Settings'),
+                        subtitle: const Text('Customize your experience'),
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.only(left: 24),
                             child: ExpansionTile(
-                              leading: FaIcon(FontAwesomeIcons.palette),
-                              title: Text(
+                              leading: const FaIcon(FontAwesomeIcons.palette),
+                              title: const Text(
                                 'Theme',
                                 style: TextStyle(fontSize: 12),
                               ),
-                              subtitle: Text(
+                              subtitle: const Text(
                                 'Change your theme',
                                 style: TextStyle(fontSize: 10),
                               ),
                               children: <Widget>[
-                                ThemeModeCarousel(),
-                                ThemeColorsCarousel(),
-                                ThemeFontCarousel(),
-                                SizedBox(height: 8),
+                                const ThemeModeCarousel(),
+                                const ThemeColorsCarousel(),
+                                const ThemeFontCarousel(),
+                                const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Padding(
-                                      padding: EdgeInsets.only(right: 16),
+                                      padding: const EdgeInsets.only(right: 16),
                                       child: FilledButton(
-                                        onPressed: saveThemeSettings,
-                                        child: FaIcon(
+                                        onPressed: () {
+                                          saveThemeSettings(context: context);
+                                        },
+                                        child: const FaIcon(
                                           FontAwesomeIcons.floppyDisk,
                                         ),
                                       ),

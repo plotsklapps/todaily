@@ -5,16 +5,21 @@ import 'package:hive_ce/hive.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
 import 'package:todaily/theme/thememode_carousel.dart';
+import 'package:todaily/widgets/toast_widget.dart';
 
-Future<void> saveThemeSettings() async {
+Future<void> saveThemeSettings({required BuildContext context}) async {
   // Get the current values from the Signals and convert them to String.
   final String themeMode = sThemeMode.value.toString();
   final String flexScheme = sFlexScheme.value.name;
   final String font = sFont.value;
 
+  // Store the values in the Hive settings box.
   await Hive.box<dynamic>('settings').put('themeMode', themeMode);
   await Hive.box<dynamic>('settings').put('flexScheme', flexScheme);
   await Hive.box<dynamic>('settings').put('font', font);
+
+  // Show a success message.
+  showSuccesToast(title: 'Successfully stored theme settings!');
 }
 
 Future<void> loadThemeSettings() async {
