@@ -204,7 +204,7 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
     try {
       final XFile? pickedFile = await _picker.pickImage(
         source: index == 3 ? ImageSource.camera : ImageSource.gallery,
-        maxWidth: 800, // Optional: Resize the image
+        maxWidth: 800,
         maxHeight: 800,
       );
 
@@ -242,8 +242,7 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                       : Center(
                         child: FaIcon(
                           index == 3
-                              ? FontAwesomeIcons
-                                  .camera // Camera icon for the fourth card
+                              ? FontAwesomeIcons.camera
                               : FontAwesomeIcons.fileCirclePlus,
                           color: cThemeData.value.colorScheme.primary,
                         ),
