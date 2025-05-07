@@ -1,12 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/database/hive_settings.dart';
 import 'package:todaily/screens/today_screen.dart';
-import 'package:todaily/theme/themecolors_carousel.dart';
-import 'package:todaily/theme/themefont_carousel.dart';
-import 'package:todaily/theme/thememode_carousel.dart';
+import 'package:todaily/widgets/drawer_widget.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -41,105 +36,7 @@ class MainScreen extends StatelessWidget {
             ],
           ),
         ),
-        endDrawer: Drawer(
-          child: Column(
-            children: <Widget>[
-              const DrawerHeader(child: Center(child: Text('todaily'))),
-              Expanded(
-                child: ScrollConfiguration(
-                  behavior: const ScrollBehavior().copyWith(
-                    scrollbars: false,
-                    physics: const BouncingScrollPhysics(),
-                    dragDevices: <PointerDeviceKind>{
-                      PointerDeviceKind.touch,
-                      PointerDeviceKind.mouse,
-                      PointerDeviceKind.stylus,
-                      PointerDeviceKind.trackpad,
-                    },
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        // Remove the Divider from the ExpansionTile.
-                        Theme(
-                          data: Theme.of(
-                            context,
-                          ).copyWith(dividerColor: Colors.transparent),
-                          child: const ExpansionTile(
-                            leading: FaIcon(FontAwesomeIcons.gear),
-                            title: Text('Settings'),
-                            subtitle: Text('Customize your experience'),
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(left: 24),
-                                child: ExpansionTile(
-                                  leading: FaIcon(FontAwesomeIcons.palette),
-                                  title: Text(
-                                    'Theme',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  subtitle: Text(
-                                    'Change your theme',
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                  children: <Widget>[
-                                    ThemeModeCarousel(),
-                                    ThemeColorsCarousel(),
-                                    ThemeFontCarousel(),
-                                    SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: EdgeInsets.only(right: 16),
-                                          child: FilledButton(
-                                            onPressed: saveThemeSettings,
-                                            child: FaIcon(
-                                              FontAwesomeIcons.floppyDisk,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        ListTile(
-                          title: const Text('About'),
-                          onTap: () {
-                            // Handle about tap
-                          },
-                        ),
-                        ListTile(
-                          title: const Text('Help'),
-                          onTap: () {
-                            // Handle help tap
-                          },
-                        ),
-                        ListTile(
-                          title: const Text('Feedback'),
-                          onTap: () {
-                            // Handle feedback tap
-                          },
-                        ),
-                        ListTile(
-                          title: const Text('Version'),
-                          onTap: () {
-                            // Handle version update tap
-                          },
-                        ),
-                        const Divider(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        endDrawer: const DrawerWidget(),
         body: const TabBarView(
           children: <Widget>[TodayScreen(), TodayScreen(), TodayScreen()],
         ),

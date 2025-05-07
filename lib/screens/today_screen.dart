@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:todaily/now_signal.dart';
-import 'package:todaily/state/image_signal.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -20,7 +19,6 @@ class _TodayScreenState extends State<TodayScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   MoodType _selectedMood = MoodType.relaxed;
-  final PickImage _pickImage = PickImage();
 
   @override
   void dispose() {
