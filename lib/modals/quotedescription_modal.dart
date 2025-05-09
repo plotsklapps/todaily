@@ -13,11 +13,13 @@ class QuoteDescriptionModal extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Header.
         Text(
           'Quote by ${Quote.sAuthor.watch(context) ?? 'Unknown'}',
           style: const TextStyle(fontSize: 18),
         ),
         const Divider(),
+        // Scrollable content.
         Flexible(
           child: ScrollConfiguration(
             behavior: const ScrollBehavior().copyWith(
@@ -45,7 +47,7 @@ class QuoteDescriptionModal extends StatelessWidget {
             ),
           ),
         ),
-
+        // Footer.
         const Divider(),
         const SizedBox(height: 8),
         // Footer section
