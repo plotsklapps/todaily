@@ -81,29 +81,34 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the sheet
-                        cameraController.dispose();
-                      },
-                      child: const Text('Cancel'),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close the sheet
+                          cameraController.dispose();
+                        },
+                        child: const Text('Cancel'),
+                      ),
                     ),
-                    FilledButton(
-                      onPressed: () async {
-                        final XFile picture =
-                            await cameraController.takePicture();
-                        final Uint8List imageData = await picture.readAsBytes();
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () async {
+                          final XFile picture =
+                              await cameraController.takePicture();
+                          final Uint8List imageData =
+                              await picture.readAsBytes();
 
-                        setState(() {
-                          _images[index] = imageData;
-                        });
+                          setState(() {
+                            _images[index] = imageData;
+                          });
 
-                        Navigator.pop(context); // Close the sheet
-                        cameraController.dispose();
-                      },
-                      child: const Text('Capture'),
+                          Navigator.pop(context); // Close the sheet
+                          cameraController.dispose();
+                        },
+                        child: const Text('Capture'),
+                      ),
                     ),
                   ],
                 ),
@@ -241,9 +246,9 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
               child:
                   _images[index] != null
                       ? Image.memory(_images[index]!, fit: BoxFit.cover)
-                      : Center(
-                        child: Icon(
-                          index == 3 ? Icons.camera_alt : Icons.photo_library,
+                      : const Center(
+                        child: FaIcon(
+                          FontAwesomeIcons.plus,
                           color: Colors.grey,
                         ),
                       ),

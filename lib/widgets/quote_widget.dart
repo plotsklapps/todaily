@@ -1,188 +1,115 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'package:url_launcher/link.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:todaily/modals/quotedescription_modal.dart';
+import 'package:todaily/state/loading_signal.dart';
+import 'package:todaily/widgets/modal_widget.dart';
 
 class QuoteWidget extends StatefulWidget {
   const QuoteWidget({super.key});
 
   @override
-  State<QuoteWidget> createState() => _QuoteWidgetState();
+  State<QuoteWidget> createState() {
+    return _QuoteWidgetState();
+  }
 }
 
 class _QuoteWidgetState extends State<QuoteWidget> {
-  String? quote;
-  String? author;
-  String? description;
-  String? quoteUrl;
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    fetchQuote();
+    Quote.fetchQuote();
   }
 
-  Future<void> fetchQuote() async {
+  @override
+  Widget build(BuildContext context) {
+    // While loading the quote, show a loading indicator. sLoading.value is
+    // toggled in Quote.fetchQuote().
+    return sLoading.watch(context)
+        ? const SizedBox(
+          height: 32,
+          child: Center(child: LinearProgressIndicator()),
+        )
+        : Column(
+          children: <Widget>[
+            Text(
+              '"${Quote.sQuote.watch(context) ?? 'No quote available'}"',
+              style: const TextStyle(fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
+            ),
+            TextButton(
+              onPressed: () {
+                // Show the QuoteDescriptionModal.
+                showModal(
+                  context: context,
+                  child: const QuoteDescriptionModal(),
+                );
+              },
+              child: Text('- ${Quote.sAuthor.watch(context) ?? 'Unknown'}'),
+            ),
+          ],
+        );
+  }
+}
+
+class Quote {
+  static final Signal<String?> sQuote = Signal<String?>(
+    '',
+    debugLabel: 'sQuote',
+  );
+  static final Signal<String?> sAuthor = Signal<String?>(
+    '',
+    debugLabel: 'sAuthor',
+  );
+  static final Signal<String?> sDescription = Signal<String?>(
+    '',
+    debugLabel: 'sDescription',
+  );
+  static final Signal<String?> sQuoteUrl = Signal<String?>(
+    '',
+    debugLabel: 'sQuoteUrl',
+  );
+
+  static Future<void> fetchQuote() async {
     const String url =
         'https://quotes15.p.rapidapi.com/quotes/random/?language_code=en';
     const Map<String, String> headers = {
       'x-rapidapi-key': '4e9b09616amshcb8bc4ff62ef298p15f8d8jsn8527db553cab',
       'x-rapidapi-host': 'quotes15.p.rapidapi.com',
     };
+    final Logger logger = Logger();
 
     try {
+      sLoading.value = true;
       final http.Response response = await http.get(
         Uri.parse(url),
         headers: headers,
       );
       if (response.statusCode == 200) {
-        Logger().i(response.body);
         final Map<String, dynamic> data =
             json.decode(response.body) as Map<String, dynamic>;
-        setState(() {
-          quote = data['content'] as String?;
-          author = data['originator']['name'] as String?;
-          description = data['originator']['description'] as String?;
-          quoteUrl = data['url'] as String?;
-          isLoading = false;
-        });
+        sQuote.value = data['content'] as String?;
+        sAuthor.value =
+            (data['originator'] as Map<String, dynamic>)['name'] as String?;
+        sDescription.value =
+            (data['originator'] as Map<String, dynamic>)['description']
+                as String?;
+        sQuoteUrl.value = data['url'] as String?;
       } else {
-        setState(() {
-          quote = 'Failed to load quote';
-          author = '';
-          description = '';
-          isLoading = false;
-        });
+        sQuote.value = 'Failed to load quote';
+        sAuthor.value = 'Failed to load author';
+        sDescription.value = 'Failed to load description';
       }
     } on Exception catch (e) {
-      setState(() {
-        quote = 'An error occurred';
-        author = '';
-        description = '';
-        isLoading = false;
-      });
-      Logger().e('Error fetching quote: $e');
+      sQuote.value = 'An error occurred';
+      sAuthor.value = 'Please try again later';
+      sDescription.value = 'Failed to load description';
+      logger.e('Error fetching quote: $e');
+    } finally {
+      sLoading.value = false;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Column(
-          children: <Widget>[
-            Text(
-              '"${quote ?? 'No quote available'}"',
-              style: const TextStyle(fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
-            ),
-            TextButton(
-              onPressed: () {
-                showModalBottomSheet<Widget>(
-                  showDragHandle: true,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ScrollConfiguration(
-                      behavior: const ScrollBehavior().copyWith(
-                        scrollbars: false,
-                        physics: const BouncingScrollPhysics(),
-                        dragDevices: <PointerDeviceKind>{
-                          PointerDeviceKind.touch,
-                          PointerDeviceKind.mouse,
-                          PointerDeviceKind.stylus,
-                          PointerDeviceKind.trackpad,
-                        },
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Header section
-                          Text(
-                            'Quote by ${author ?? 'Unknown'}',
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          const Divider(),
-
-                          // Scrollable content
-                          Flexible(
-                            child: ScrollConfiguration(
-                              behavior: const ScrollBehavior().copyWith(
-                                physics: const BouncingScrollPhysics(),
-                                dragDevices: <PointerDeviceKind>{
-                                  PointerDeviceKind.touch,
-                                  PointerDeviceKind.mouse,
-                                  PointerDeviceKind.stylus,
-                                  PointerDeviceKind.trackpad,
-                                },
-                              ),
-                              child: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Text(
-                                    (description?.isEmpty ?? true)
-                                        ? 'No originator description '
-                                            'available, but you can visit the '
-                                            'source to find out more.'
-                                        : description!,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          Divider(),
-                          const SizedBox(height: 8),
-                          // Footer section
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      // Pop the bottomsheet.
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Back'),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Link(
-                                    uri: Uri.parse(quoteUrl ?? ''),
-                                    target: LinkTarget.blank,
-                                    builder: (
-                                      BuildContext context,
-                                      FollowLink? followLink,
-                                    ) {
-                                      return FilledButton(
-                                        onPressed: followLink,
-                                        child: const Text('Source'),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Text('- ${author ?? 'Unknown'}'),
-            ),
-          ],
-        );
   }
 }
