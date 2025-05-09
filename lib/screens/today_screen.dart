@@ -63,7 +63,7 @@ class _TodayScreenState extends State<TodayScreen> {
             const SizedBox(height: 8),
             const Text("today's images"),
             const SizedBox(height: 8),
-            const ImagePickerRow(),
+            const ImagePickerCarousel(),
           ],
         ),
       ),
@@ -153,30 +153,14 @@ class MoodSelection extends StatelessWidget {
               MoodType.values.map((MoodType mood) {
                 final bool isSelected = selectedMood == mood;
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      mood.icon,
-                      color:
-                          isSelected
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      mood.name,
-                      style: TextStyle(
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color:
-                            isSelected
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                return Center(
+                  child: FaIcon(
+                    mood.icon,
+                    color:
+                        isSelected
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
+                  ),
                 );
               }).toList(),
         ),
