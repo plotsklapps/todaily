@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,35 +16,104 @@ class ImagePickerRow extends StatefulWidget {
 }
 
 class _ImagePickerGridState extends State<ImagePickerRow> {
-  // List of images in Uint8List format. Nullable to allow for empty slots.
   final List<Uint8List?> _images = List<Uint8List?>.filled(4, null);
-
-  // ImagePicker instance from the image_picker package.
   final ImagePicker _picker = ImagePicker();
-
-  // Logger instance for logging information.
   final Logger _logger = Logger();
 
   Future<void> _pickImage(int index) async {
     try {
-      // Use the ImagePicker to select an image from the gallery or camera.
-      // If index is 3, use the camera; otherwise, use the gallery.
       final XFile? pickedFile = await _picker.pickImage(
-        source: index == 3 ? ImageSource.camera : ImageSource.gallery,
+        source: ImageSource.gallery,
         maxWidth: 800,
         maxHeight: 800,
       );
 
       if (pickedFile != null) {
-        // Read the selected image as bytes and store it in the _images list.
         final Uint8List imageData = await pickedFile.readAsBytes();
         setState(() {
           _images[index] = imageData;
         });
       }
     } on Exception catch (error, stackTrace) {
-      // Log any errors that occur during image picking.
       _logger.e('Error picking image: $error, $stackTrace');
+    }
+  }
+
+  Future<void> _takePicture(int index) async {
+    try {
+      final List<CameraDescription> cameras = await availableCameras();
+
+      // Check if there are cameras available
+      if (cameras.isEmpty) {
+        _logger.e('No cameras available');
+        return;
+      }
+
+      // Allow the user to select a camera (default to the first one)
+      final CameraDescription selectedCamera = cameras.firstWhere(
+        (CameraDescription camera) {
+          return camera.lensDirection == CameraLensDirection.front;
+        },
+        orElse: () {
+          return cameras.first;
+        },
+      );
+
+      final CameraController cameraController = CameraController(
+        selectedCamera,
+        ResolutionPreset.medium,
+      );
+
+      await cameraController.initialize();
+
+      // Show the CameraPreview in a ModalBottomSheet
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              AspectRatio(
+                aspectRatio: cameraController.value.aspectRatio,
+                child: CameraPreview(cameraController),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the sheet
+                        cameraController.dispose();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () async {
+                        final XFile picture =
+                            await cameraController.takePicture();
+                        final Uint8List imageData = await picture.readAsBytes();
+
+                        setState(() {
+                          _images[index] = imageData;
+                        });
+
+                        Navigator.pop(context); // Close the sheet
+                        cameraController.dispose();
+                      },
+                      child: const Text('Capture'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    } on Exception catch (error, stackTrace) {
+      _logger.e('Error taking picture: $error, $stackTrace');
     }
   }
 
@@ -76,10 +146,7 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                             Expanded(
                               child: OutlinedButton(
                                 onPressed: () {
-                                  // Pop the bottomsheet.
                                   Navigator.pop(context);
-
-                                  // Remove the image from the list.
                                   setState(() {
                                     _images[index] = null;
                                   });
@@ -91,10 +158,7 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                             Expanded(
                               child: FilledButton(
                                 onPressed: () {
-                                  // Pop the bottomsheet.
                                   Navigator.pop(context);
-
-                                  // Pick a new image.
                                   _pickImage(index);
                                 },
                                 child: const Text('Change Image'),
@@ -108,8 +172,66 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                 },
               );
             } else {
-              // No image is selected, pick a new image.
-              _pickImage(index);
+              // Show options to pick from gallery or take a picture.
+              showModalBottomSheet<Widget>(
+                showDragHandle: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('Select Image'),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () {
+                                  // Pop the bottomsheet.
+                                  Navigator.pop(context);
+
+                                  // Open the image picker.
+                                  _pickImage(index);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.fileImage),
+                                    SizedBox(width: 8),
+                                    Text('Gallery'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () {
+                                  // Pop the bottomsheet.
+                                  Navigator.pop(context);
+
+                                  // Open the camera.
+                                  _takePicture(index);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FaIcon(FontAwesomeIcons.camera),
+                                    SizedBox(width: 8),
+                                    Text('Camera'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
             }
           },
           child: Card(
@@ -120,10 +242,8 @@ class _ImagePickerGridState extends State<ImagePickerRow> {
                   _images[index] != null
                       ? Image.memory(_images[index]!, fit: BoxFit.cover)
                       : Center(
-                        child: FaIcon(
-                          index == 3
-                              ? FontAwesomeIcons.camera
-                              : FontAwesomeIcons.fileCirclePlus,
+                        child: Icon(
+                          index == 3 ? Icons.camera_alt : Icons.photo_library,
                           color: Colors.grey,
                         ),
                       ),
