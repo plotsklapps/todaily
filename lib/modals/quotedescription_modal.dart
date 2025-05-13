@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/scrollconfiguration_logic.dart';
 import 'package:todaily/widgets/quote_widget.dart';
 import 'package:url_launcher/link.dart';
 
@@ -10,30 +11,21 @@ class QuoteDescriptionModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // Header.
-        Text(
-          'Quote by ${Quote.sAuthor.watch(context) ?? 'Unknown'}',
-          style: const TextStyle(fontSize: 18),
-        ),
-        const Divider(),
-        // Scrollable content.
-        Flexible(
-          child: ScrollConfiguration(
-            behavior: const ScrollBehavior().copyWith(
-              physics: const BouncingScrollPhysics(),
-              dragDevices: <PointerDeviceKind>{
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-                PointerDeviceKind.stylus,
-                PointerDeviceKind.trackpad,
-              },
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Header.
+          Text(
+            'Quote by ${Quote.sAuthor.watch(context) ?? 'Unknown'}',
+            style: const TextStyle(fontSize: 18),
+          ),
+          const Divider(),
+          // Scrollable content.
+          Flexible(
+            child: CustomScrollConfiguration(
+              child: SingleChildScrollView(
                 child: Text(
                   (Quote.sDescription.watch(context) == null ||
                           Quote.sDescription.watch(context)!.isEmpty)
@@ -46,14 +38,11 @@ class QuoteDescriptionModal extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        // Footer.
-        const Divider(),
-        const SizedBox(height: 8),
-        // Footer section
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
+          // Footer.
+          const Divider(),
+          const SizedBox(height: 8),
+          // Footer section
+          Row(
             children: <Widget>[
               Expanded(
                 child: OutlinedButton(
@@ -79,9 +68,8 @@ class QuoteDescriptionModal extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:todaily/scrollconfiguration_logic.dart';
 
 // Custom way to show a modal bottom sheet with a drag handle and
 // scrollable content for all devices.
@@ -13,17 +12,7 @@ Future<void> showModal({
     isScrollControlled: true,
     context: context,
     builder: (BuildContext context) {
-      return ScrollConfiguration(
-        behavior: const ScrollBehavior().copyWith(
-          scrollbars: false,
-          physics: const BouncingScrollPhysics(),
-          dragDevices: <PointerDeviceKind>{
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.trackpad,
-          },
-        ),
+      return CustomScrollConfiguration(
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(

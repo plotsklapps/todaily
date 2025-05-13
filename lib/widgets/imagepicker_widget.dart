@@ -9,7 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
 import 'package:todaily/toast.dart';
-import 'package:todaily/widgets/modal_widget.dart';
+import 'package:todaily/widgets/modal_logic.dart';
 
 class ImagePickerCarousel extends StatefulWidget {
   const ImagePickerCarousel({super.key});
@@ -197,7 +197,9 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
                 child: PickImageModal(
                   index: index,
                   onPickImage: () => _pickImage(index),
-                  onTakePicture: () => _takePicture(index),
+                  onTakePicture: () async {
+                    await _takePicture(index);
+                  },
                 ),
               );
             }

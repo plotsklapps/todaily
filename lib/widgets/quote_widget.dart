@@ -6,7 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/quotedescription_modal.dart';
 import 'package:todaily/state/loading_signal.dart';
-import 'package:todaily/widgets/modal_widget.dart';
+import 'package:todaily/widgets/modal_logic.dart';
 
 class QuoteWidget extends StatefulWidget {
   const QuoteWidget({super.key});
