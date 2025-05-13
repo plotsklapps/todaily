@@ -145,24 +145,21 @@ class MoodSelection extends StatelessWidget {
         child: CarouselView(
           itemExtent: 100,
           shrinkExtent: 80,
-          itemSnapping: true,
           onTap: (int index) {
             onMoodSelected(MoodType.values[index]);
           },
-          children:
-              MoodType.values.map((MoodType mood) {
-                final bool isSelected = selectedMood == mood;
+          children: MoodType.values.map((MoodType mood) {
+            final bool isSelected = selectedMood == mood;
 
-                return Center(
-                  child: FaIcon(
-                    mood.icon,
-                    color:
-                        isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                  ),
-                );
-              }).toList(),
+            return Center(
+              child: FaIcon(
+                mood.icon,
+                color: isSelected
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+            );
+          }).toList(),
         ),
       ),
     );

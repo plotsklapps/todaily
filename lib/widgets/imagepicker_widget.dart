@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
+import 'package:todaily/toast.dart';
 import 'package:todaily/widgets/modal_widget.dart';
 
 class ImagePickerCarousel extends StatefulWidget {
@@ -26,6 +27,7 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
 
   Future<void> _pickImage(int index) async {
     try {
+      // Pick image from gallery and set max width and height.
       final XFile? pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 800,
@@ -33,94 +35,123 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
       );
 
       if (pickedFile != null) {
+        // Convert image to Uint8List (memory efficient).
         final Uint8List imageData = await pickedFile.readAsBytes();
+
+        // Update the image in the list and rebuild the widget.
         setState(() {
           _images[index] = imageData;
         });
       }
     } on Exception catch (error, stackTrace) {
+      // Show the error to the user.
+      showErrorToast(message: 'Error picking image: $error');
+
+      // Log the error.
       _logger.e('Error picking image: $error, $stackTrace');
     }
   }
 
   Future<void> _takePicture(int index) async {
     try {
+      // Get the available cameras.
       final List<CameraDescription> cameras = await availableCameras();
 
       if (cameras.isEmpty) {
+        // Show error to the user.
+        showErrorToast(message: 'No camera found!');
+
+        // Log the error.
         _logger.e('No cameras available');
         return;
       }
 
       final CameraDescription selectedCamera = cameras.firstWhere(
         (CameraDescription camera) {
+          // Look for the first front-facing camera available.
           return camera.lensDirection == CameraLensDirection.front;
         },
         orElse: () {
+          // No front facing? Just return the first.
           return cameras.first;
         },
       );
 
+      // Create a controller for the selected camera with medium resolution.
       final CameraController cameraController = CameraController(
         selectedCamera,
         ResolutionPreset.medium,
       );
 
+      // Initialize the controller.
       await cameraController.initialize();
 
       if (mounted) {
-        await showModalBottomSheet<void>(
+        await showModal(
           context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: cameraController.value.aspectRatio,
-                  child: CameraPreview(cameraController),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            cameraController.dispose();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () async {
-                            final XFile picture =
-                                await cameraController.takePicture();
-                            final Uint8List imageData =
-                                await picture.readAsBytes();
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // Show a preview of the camera.
+              AspectRatio(
+                aspectRatio: cameraController.value.aspectRatio,
+                child: CameraPreview(cameraController),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Pop the bottomsheet.
+                          Navigator.pop(context);
 
-                            setState(() {
-                              _images[index] = imageData;
-                            });
-
-                            Navigator.pop(context);
-                            cameraController.dispose();
-                          },
-                          child: const Text('Capture'),
-                        ),
+                          // Dispose the controller.
+                          cameraController.dispose();
+                        },
+                        child: const Text('Cancel'),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () async {
+                          // Take a picture.
+                          final XFile picture = await cameraController
+                              .takePicture();
+
+                          // Convert image to Uint8List (memory efficient).
+                          final Uint8List imageData = await picture
+                              .readAsBytes();
+
+                          // Update the image in the list and rebuild the
+                          // widget.
+                          setState(() {
+                            _images[index] = imageData;
+                          });
+
+                          // Pop the bottomsheet.
+                          Navigator.pop(context);
+
+                          // Dispose the controller.
+                          await cameraController.dispose();
+                        },
+                        child: const Text('Capture'),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         );
       }
     } on Exception catch (error, stackTrace) {
+      // Show the error to the user.
+      showErrorToast(message: 'Error taking picture: $error');
+
+      // Log the error.
       _logger.e('Error taking picture: $error, $stackTrace');
     }
   }
@@ -143,7 +174,6 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
         child: CarouselView(
           itemExtent: 100,
           shrinkExtent: 80,
-          itemSnapping: true,
           onTap: (int index) {
             if (_images[index] != null) {
               showModal(
@@ -162,16 +192,13 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
                 ),
               );
             } else {
-              showModalBottomSheet<Widget>(
-                showDragHandle: true,
+              showModal(
                 context: context,
-                builder: (BuildContext context) {
-                  return PickImageModal(
-                    index: index,
-                    onPickImage: () => _pickImage(index),
-                    onTakePicture: () => _takePicture(index),
-                  );
-                },
+                child: PickImageModal(
+                  index: index,
+                  onPickImage: () => _pickImage(index),
+                  onTakePicture: () => _takePicture(index),
+                ),
               );
             }
           },
@@ -179,8 +206,8 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
             return _images[index] != null
                 ? Image.memory(_images[index]!, fit: BoxFit.cover)
                 : const Center(
-                  child: FaIcon(FontAwesomeIcons.plus, color: Colors.grey),
-                );
+                    child: FaIcon(FontAwesomeIcons.plus, color: Colors.grey),
+                  );
           }),
         ),
       ),

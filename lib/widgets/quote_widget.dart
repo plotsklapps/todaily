@@ -18,6 +18,8 @@ class QuoteWidget extends StatefulWidget {
 }
 
 class _QuoteWidgetState extends State<QuoteWidget> {
+  bool _isQuoteExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -30,28 +32,46 @@ class _QuoteWidgetState extends State<QuoteWidget> {
     // toggled in Quote.fetchQuote().
     return sLoading.watch(context)
         ? const SizedBox(
-          height: 32,
-          child: Center(child: LinearProgressIndicator()),
-        )
+            height: 32,
+            child: Center(child: LinearProgressIndicator()),
+          )
         : Column(
-          children: <Widget>[
-            Text(
-              '"${Quote.sQuote.watch(context) ?? 'No quote available'}"',
-              style: const TextStyle(fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
-            ),
-            TextButton(
-              onPressed: () {
-                // Show the QuoteDescriptionModal.
-                showModal(
-                  context: context,
-                  child: const QuoteDescriptionModal(),
-                );
-              },
-              child: Text('- ${Quote.sAuthor.watch(context) ?? 'Unknown'}'),
-            ),
-          ],
-        );
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isQuoteExpanded = !_isQuoteExpanded;
+                  });
+                },
+                child: AnimatedSize(
+                  // Animate the transition between sizes of the Text widget.
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                  child: Text(
+                    '"${Quote.sQuote.watch(context) ?? 'No quote available'}"',
+                    style: const TextStyle(fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.center,
+                    // Control maxLines based on _isExpanded state
+                    maxLines: _isQuoteExpanded ? null : 2,
+                    // Show ellipsis when truncated
+                    overflow: _isQuoteExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Show the QuoteDescriptionModal.
+                  showModal(
+                    context: context,
+                    child: const QuoteDescriptionModal(),
+                  );
+                },
+                child: Text('- ${Quote.sAuthor.watch(context) ?? 'Unknown'}'),
+              ),
+            ],
+          );
   }
 }
 
@@ -76,7 +96,7 @@ class Quote {
   static Future<void> fetchQuote() async {
     const String url =
         'https://quotes15.p.rapidapi.com/quotes/random/?language_code=en';
-    const Map<String, String> headers = {
+    const Map<String, String> headers = <String, String>{
       'x-rapidapi-key': '4e9b09616amshcb8bc4ff62ef298p15f8d8jsn8527db553cab',
       'x-rapidapi-host': 'quotes15.p.rapidapi.com',
     };

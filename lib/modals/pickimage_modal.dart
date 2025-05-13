@@ -23,7 +23,7 @@ class PickImageModal extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: FilledButton(
                   onPressed: () {

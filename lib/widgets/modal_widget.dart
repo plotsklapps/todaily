@@ -24,7 +24,14 @@ Future<void> showModal({
             PointerDeviceKind.trackpad,
           },
         ),
-        child: SingleChildScrollView(child: child),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.64,
+            ),
+            child: child,
+          ),
+        ),
       );
     },
   );

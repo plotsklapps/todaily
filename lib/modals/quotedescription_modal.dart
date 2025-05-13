@@ -38,8 +38,8 @@ class QuoteDescriptionModal extends StatelessWidget {
                   (Quote.sDescription.watch(context) == null ||
                           Quote.sDescription.watch(context)!.isEmpty)
                       ? 'No originator description '
-                          'available, but you can visit the '
-                          'source to find out more.'
+                            'available, but you can visit the '
+                            'source to find out more.'
                       : Quote.sDescription.watch(context)!,
                   textAlign: TextAlign.center,
                 ),
