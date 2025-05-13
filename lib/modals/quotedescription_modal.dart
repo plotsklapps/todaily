@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/scrollconfiguration_logic.dart';
