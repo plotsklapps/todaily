@@ -48,6 +48,7 @@ class DrawerWidget extends StatelessWidget {
                               const ThemeFontCarousel(),
                               const SizedBox(height: 8),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(right: 16),
