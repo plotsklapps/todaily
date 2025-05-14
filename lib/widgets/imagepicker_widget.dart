@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
+import 'package:todaily/scrollconfiguration_logic.dart';
 import 'package:todaily/toast.dart';
 import 'package:todaily/widgets/modal_logic.dart';
 
@@ -87,64 +88,68 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
       await cameraController.initialize();
 
       if (mounted) {
-        await showModal(
+        await showModalBottomSheet<Widget>(
+          showDragHandle: true,
+          isScrollControlled: true,
           context: context,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // Show a preview of the camera.
-              AspectRatio(
-                aspectRatio: cameraController.value.aspectRatio,
-                child: CameraPreview(cameraController),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Pop the bottomsheet.
-                          Navigator.pop(context);
-
-                          // Dispose the controller.
-                          cameraController.dispose();
-                        },
-                        child: const Text('Cancel'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () async {
-                          // Take a picture.
-                          final XFile picture = await cameraController
-                              .takePicture();
-
-                          // Convert image to Uint8List (memory efficient).
-                          final Uint8List imageData = await picture
-                              .readAsBytes();
-
-                          // Update the image in the list and rebuild the
-                          // widget.
-                          setState(() {
-                            _images[index] = imageData;
-                          });
-
-                          // Pop the bottomsheet.
-                          Navigator.pop(context);
-
-                          // Dispose the controller.
-                          await cameraController.dispose();
-                        },
-                        child: const Text('Capture'),
-                      ),
-                    ),
-                  ],
+          builder: (BuildContext context) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                // Show a preview of the camera.
+                AspectRatio(
+                  aspectRatio: cameraController.value.aspectRatio,
+                  child: CameraPreview(cameraController),
                 ),
-              ),
-            ],
-          ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            // Pop the bottomsheet.
+                            Navigator.pop(context);
+
+                            // Dispose the controller.
+                            cameraController.dispose();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () async {
+                            // Take a picture.
+                            final XFile picture = await cameraController
+                                .takePicture();
+
+                            // Convert image to Uint8List (memory efficient).
+                            final Uint8List imageData = await picture
+                                .readAsBytes();
+
+                            // Update the image in the list and rebuild the
+                            // widget.
+                            setState(() {
+                              _images[index] = imageData;
+                            });
+
+                            // Pop the bottomsheet.
+                            Navigator.pop(context);
+
+                            // Dispose the controller.
+                            await cameraController.dispose();
+                          },
+                          child: const Text('Capture'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         );
       }
     } on Exception catch (error, stackTrace) {
@@ -160,17 +165,7 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 80,
-      child: ScrollConfiguration(
-        behavior: const ScrollBehavior().copyWith(
-          overscroll: false,
-          physics: const BouncingScrollPhysics(),
-          dragDevices: <PointerDeviceKind>{
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.trackpad,
-          },
-        ),
+      child: CustomScrollConfiguration(
         child: CarouselView(
           itemExtent: 100,
           shrinkExtent: 80,
