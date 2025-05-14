@@ -48,14 +48,14 @@ class DrawerWidget extends StatelessWidget {
                                 const ThemeColorsCarousel(),
                                 const ThemeFontCarousel(),
                                 const SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                        ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 16,
+                                    ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
                                         child: FilledButton(
                                           onPressed: () {
                                             saveThemeSettings(context: context);
@@ -65,8 +65,8 @@ class DrawerWidget extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
