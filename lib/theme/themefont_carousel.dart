@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/scrollconfiguration_logic.dart';
 
 // Signal for the current font family. Defaults to Questrial.
 final Signal<String> sFont = Signal<String>(
@@ -24,7 +25,7 @@ class ThemeFontCarousel extends StatelessWidget {
       GoogleFonts.poppins().fontFamily!,
       GoogleFonts.raleway().fontFamily!,
       GoogleFonts.notoSans().fontFamily!,
-      GoogleFonts.oswald().fontFamily!,
+      GoogleFonts.teko().fontFamily!,
       GoogleFonts.merriweather().fontFamily!,
       GoogleFonts.inter().fontFamily!,
       GoogleFonts.ptSans().fontFamily!,
@@ -51,17 +52,7 @@ class ThemeFontCarousel extends StatelessWidget {
 
     return SizedBox(
       height: 110,
-      child: ScrollConfiguration(
-        behavior: const ScrollBehavior().copyWith(
-          scrollbars: false,
-          physics: const BouncingScrollPhysics(),
-          dragDevices: <PointerDeviceKind>{
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.trackpad,
-          },
-        ),
+      child: CustomScrollConfiguration(
         child: CarouselView(
           itemExtent: 100,
           shrinkExtent: 60,
@@ -69,44 +60,42 @@ class ThemeFontCarousel extends StatelessWidget {
           onTap: (int index) {
             sFont.value = fontNames[index];
           },
-          children:
-              fontNames.map((String fontName) {
-                final bool isSelected = sFont.watch(context) == fontName;
-                final String baseFontName = fontName.split('_')[0];
+          children: fontNames.map((String fontName) {
+            final bool isSelected = sFont.watch(context) == fontName;
+            final String baseFontName = fontName.split('_')[0];
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Lorem ipsum dolor sit amet...',
-                      style: TextStyle(
-                        fontFamily: fontName,
-                        fontSize: 16,
-                        color:
-                            isSelected
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      baseFontName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color:
-                            isSelected
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Lorem ipsum dolor sit amet...',
+                  style: TextStyle(
+                    fontFamily: fontName,
+                    fontSize: 16,
+                    color: isSelected
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  baseFontName,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
         ),
       ),
     );
