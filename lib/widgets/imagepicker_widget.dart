@@ -187,7 +187,9 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
                 context: context,
                 child: PickImageModal(
                   index: index,
-                  onPickImage: () => _pickImage(index),
+                  onPickImage: () {
+                    _pickImage(index);
+                  },
                   onTakePicture: () async {
                     await _takePicture(index);
                   },
