@@ -15,6 +15,9 @@ Future<void> main() async {
   // Open the settings box.
   await Hive.openBox<dynamic>('settings');
 
+  // Open the journal box.
+  await Hive.openBox<Map<String, dynamic>>('hive_journal');
+
   // Load the settings and set the Signals.
   await loadThemeSettings();
 

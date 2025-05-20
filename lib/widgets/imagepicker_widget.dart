@@ -8,11 +8,14 @@ import 'package:logger/logger.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
 import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/state/journal_signal.dart';
 import 'package:todaily/toast.dart';
 import 'package:todaily/widgets/modal_logic.dart';
 
 class ImagePickerCarousel extends StatefulWidget {
-  const ImagePickerCarousel({super.key});
+  const ImagePickerCarousel({required this.onImagePathsChanged, super.key});
+
+  final ValueChanged<List<String>> onImagePathsChanged;
 
   @override
   State<ImagePickerCarousel> createState() {
@@ -21,9 +24,19 @@ class ImagePickerCarousel extends StatefulWidget {
 }
 
 class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
-  final List<Uint8List?> _images = List<Uint8List?>.filled(12, null);
   final ImagePicker _picker = ImagePicker();
   final Logger _logger = Logger();
+
+  // Helper to update the sImages signal
+  void _updateImageAtIndex(int index, Uint8List? imageData) {
+    final List<Uint8List?> currentImages = List<Uint8List?>.from(sImages.value);
+    // Ensure the list has enough space, padding with nulls if necessary
+    while (currentImages.length <= index) {
+      currentImages.add(null);
+    }
+    currentImages[index] = imageData;
+    sImages.value = currentImages; // Update the signal
+  }
 
   Future<void> _pickImage(int index) async {
     try {
@@ -39,9 +52,7 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
         final Uint8List imageData = await pickedFile.readAsBytes();
 
         // Update the image in the list and rebuild the widget.
-        setState(() {
-          _images[index] = imageData;
-        });
+        sImages.value[index] = imageData;
       }
     } on Exception catch (error, stackTrace) {
       // Show the error to the user.

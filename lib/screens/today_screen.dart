@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:signals/signals_flutter.dart';
+import 'package:todaily/state/journal_signal.dart';
 import 'package:todaily/state/now_signal.dart';
 import 'package:todaily/widgets/imagepicker_widget.dart';
 import 'package:todaily/widgets/quote_widget.dart';
@@ -19,7 +21,13 @@ class _TodayScreenState extends State<TodayScreen> {
   final Now now = Now();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  MoodType _selectedMood = MoodType.relaxed;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = sTitle.value;
+    _descriptionController.text = sDescription.value;
+  }
 
   @override
   void dispose() {
@@ -42,22 +50,26 @@ class _TodayScreenState extends State<TodayScreen> {
             CustomTextField(
               controller: _titleController,
               label: "today's title",
+              onChanged: (String title) {
+                sTitle.value = title;
+              },
             ),
             const SizedBox(height: 16),
             CustomTextField(
               controller: _descriptionController,
               label: "today's description",
+              onChanged: (String description) {
+                sDescription.value = description;
+              },
               maxLines: 5,
               maxLength: 220,
             ),
             const Text("today's mood"),
             const SizedBox(height: 8),
             MoodSelection(
-              selectedMood: _selectedMood,
+              selectedMood: sMood.watch(context),
               onMoodSelected: (MoodType mood) {
-                setState(() {
-                  _selectedMood = mood;
-                });
+                sMood.value = mood;
               },
             ),
             const SizedBox(height: 8),
@@ -94,12 +106,14 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     required this.controller,
     required this.label,
+    required this.onChanged,
     this.maxLines = 1,
     this.maxLength,
     super.key,
   });
   final TextEditingController controller;
   final String label;
+  final ValueChanged<String>? onChanged;
   final int maxLines;
   final int? maxLength;
 
@@ -113,6 +127,7 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         labelStyle: const TextStyle(fontSize: 14),
       ),
+      onChanged: onChanged,
     );
   }
 }
@@ -164,23 +179,4 @@ class MoodSelection extends StatelessWidget {
       ),
     );
   }
-}
-
-enum MoodType {
-  angry(FontAwesomeIcons.faceAngry),
-  sad(FontAwesomeIcons.faceSadTear),
-  neutral(FontAwesomeIcons.faceMeh),
-  relaxed(FontAwesomeIcons.faceSmile),
-  happy(FontAwesomeIcons.faceGrin),
-  excited(FontAwesomeIcons.faceGrinStars),
-  confused(FontAwesomeIcons.faceFlushed),
-  surprised(FontAwesomeIcons.faceSurprise),
-  sick(FontAwesomeIcons.faceDizzy),
-  sleepy(FontAwesomeIcons.faceTired),
-  loving(FontAwesomeIcons.faceKiss),
-  worried(FontAwesomeIcons.faceFrownOpen);
-
-  const MoodType(this.icon);
-
-  final IconData icon;
 }
