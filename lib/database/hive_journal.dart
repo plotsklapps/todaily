@@ -1,15 +1,16 @@
+import 'dart:typed_data';
+
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:todaily/screens/today_screen.dart';
-import 'package:todaily/state/now_signal.dart';
 import 'package:todaily/state/journal_signal.dart';
+import 'package:todaily/state/now_signal.dart';
 
 Future<void> saveJournalEntry({
   required DateTime date,
   required String title,
   required String description,
   required MoodType mood,
-  required List<String> imagePaths,
+  required List<Uint8List> imagePaths,
 }) async {
   final Box<Map<String, dynamic>> journalBox = Hive.box('hive_journal');
 

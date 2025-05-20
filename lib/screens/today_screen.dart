@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -75,7 +76,11 @@ class _TodayScreenState extends State<TodayScreen> {
             const SizedBox(height: 8),
             const Text("today's images"),
             const SizedBox(height: 8),
-            const ImagePickerCarousel(),
+            ImagePickerCarousel(
+              onImagePathsChanged: (List<String> imagePaths) {
+                sImages.value = imagePaths.cast<Uint8List>();
+              },
+            ),
           ],
         ),
       ),

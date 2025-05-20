@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
 import 'package:todaily/scrollconfiguration_logic.dart';
@@ -27,17 +28,6 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
   final ImagePicker _picker = ImagePicker();
   final Logger _logger = Logger();
 
-  // Helper to update the sImages signal
-  void _updateImageAtIndex(int index, Uint8List? imageData) {
-    final List<Uint8List?> currentImages = List<Uint8List?>.from(sImages.value);
-    // Ensure the list has enough space, padding with nulls if necessary
-    while (currentImages.length <= index) {
-      currentImages.add(null);
-    }
-    currentImages[index] = imageData;
-    sImages.value = currentImages; // Update the signal
-  }
-
   Future<void> _pickImage(int index) async {
     try {
       // Pick image from gallery and set max width and height.
@@ -51,7 +41,7 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
         // Convert image to Uint8List (memory efficient).
         final Uint8List imageData = await pickedFile.readAsBytes();
 
-        // Update the image in the list and rebuild the widget.
+        // Update the image in the list.
         sImages.value[index] = imageData;
       }
     } on Exception catch (error, stackTrace) {
@@ -139,11 +129,8 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
                             final Uint8List imageData = await picture
                                 .readAsBytes();
 
-                            // Update the image in the list and rebuild the
-                            // widget.
-                            setState(() {
-                              _images[index] = imageData;
-                            });
+                            // Update the image in the list.
+                            sImages.value[index] = imageData;
 
                             // Pop the bottomsheet.
                             Navigator.pop(context);
@@ -180,16 +167,15 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
           itemExtent: 100,
           shrinkExtent: 80,
           onTap: (int index) {
-            if (_images[index] != null) {
+            final Uint8List? imageIndex = sImages.watch(context)[index];
+            if (imageIndex != null) {
               showModal(
                 context: context,
                 child: ChangeImageModal(
-                  image: _images[index]!,
+                  image: imageIndex,
                   index: index,
                   onRemove: () {
-                    setState(() {
-                      _images[index] = null;
-                    });
+                    sImages.value[index] = null;
                   },
                   onChange: () {
                     _pickImage(index);
@@ -210,8 +196,9 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
             }
           },
           children: List<Widget>.generate(12, (int index) {
-            return _images[index] != null
-                ? Image.memory(_images[index]!, fit: BoxFit.cover)
+            final Uint8List? imageIndex = sImages.watch(context)[index];
+            return imageIndex != null
+                ? Image.memory(imageIndex, fit: BoxFit.cover)
                 : const Center(
                     child: FaIcon(FontAwesomeIcons.plus, color: Colors.grey),
                   );
