@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/database/hive_settings.dart';
+import 'package:todaily/firebase/firestore_service.dart';
 import 'package:todaily/scrollconfiguration_logic.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
@@ -12,6 +13,9 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirestoreService firestoreService = FirestoreService();
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return Drawer(
       child: Column(
         children: <Widget>[
@@ -49,16 +53,17 @@ class DrawerWidget extends StatelessWidget {
                                 const ThemeFontCarousel(),
                                 const SizedBox(height: 8),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 16,
-                                    ),
+                                  padding: const EdgeInsets.only(right: 16),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Expanded(
                                         child: FilledButton(
                                           onPressed: () {
-                                            saveThemeSettings(context: context);
+                                            firestoreService.addSettings(
+                                              context: context,
+                                              user: user,
+                                            );
                                           },
                                           child: const FaIcon(
                                             FontAwesomeIcons.floppyDisk,

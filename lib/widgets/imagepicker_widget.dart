@@ -46,7 +46,10 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
       }
     } on Exception catch (error, stackTrace) {
       // Show the error to the user.
-      showErrorToast(message: 'Error picking image: $error');
+      showErrorToast(
+        title: 'Error picking image: $error',
+        description: '$stackTrace',
+      );
 
       // Log the error.
       _logger.e('Error picking image: $error, $stackTrace');
@@ -60,7 +63,10 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
 
       if (cameras.isEmpty) {
         // Show error to the user.
-        showErrorToast(message: 'No camera found!');
+        showErrorToast(
+          title: 'No camera found!',
+          description: 'Please check your device',
+        );
 
         // Log the error.
         _logger.e('No cameras available');
@@ -151,7 +157,10 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
       }
     } on Exception catch (error, stackTrace) {
       // Show the error to the user.
-      showErrorToast(message: 'Error taking picture: $error');
+      showErrorToast(
+        title: 'Error taking picture: $error',
+        description: '$stackTrace',
+      );
 
       // Log the error.
       _logger.e('Error taking picture: $error, $stackTrace');

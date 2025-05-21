@@ -4,8 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 
-final Signal<Map<String, dynamic>?> sJournalEntry =
-    signal<Map<String, dynamic>?>(null, debugLabel: 'sJournalEntry');
+class JournalEntry {
+  JournalEntry({
+    required this.date,
+    required this.title,
+    required this.description,
+    required this.mood,
+    required this.images,
+  });
+
+  final DateTime date;
+  final String title;
+  final String description;
+  final MoodType mood;
+  final List<Uint8List?> images;
+}
 
 final Signal<String> sTitle = Signal<String>('', debugLabel: 'sTitle');
 
