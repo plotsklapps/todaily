@@ -1,21 +1,22 @@
 import 'dart:typed_data';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/logic/pickimage_service.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
 import 'package:todaily/scrollconfiguration_logic.dart';
-import 'package:todaily/state/journal_signal.dart';
-import 'package:todaily/toast.dart';
 import 'package:todaily/widgets/modal_logic.dart';
 
+// A horizontal carousel for selecting and displaying images.
+// This widget allows users to select images from their gallery or take
+// pictures using the camera. It displays the selected images in a
+// horizontally scrolling carousel.
 class ImagePickerCarousel extends StatefulWidget {
   const ImagePickerCarousel({required this.onImagePathsChanged, super.key});
 
+  // Callback function triggered when the list of image paths changes.
   final ValueChanged<List<String>> onImagePathsChanged;
 
   @override
@@ -25,146 +26,18 @@ class ImagePickerCarousel extends StatefulWidget {
 }
 
 class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
-  final ImagePicker _picker = ImagePicker();
-  final Logger _logger = Logger();
+  // Service for handling image picking and taking logic.
+  late final PickImageService _pickImageService;
 
-  Future<void> _pickImage(int index) async {
-    try {
-      // Pick image from gallery and set max width and height.
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-      );
+  // Signal to hold the list of selected images.
+  final Signal<List<Uint8List?>> sImagesList = Signal<List<Uint8List?>>(
+    List<Uint8List?>.generate(12, (int index) => null),
+  );
 
-      if (pickedFile != null) {
-        // Convert image to Uint8List (memory efficient).
-        final Uint8List imageData = await pickedFile.readAsBytes();
-
-        // Update the image in the list.
-        sImages.value[index] = imageData;
-      }
-    } on Exception catch (error, stackTrace) {
-      // Show the error to the user.
-      showErrorToast(
-        title: 'Error picking image: $error',
-        description: '$stackTrace',
-      );
-
-      // Log the error.
-      _logger.e('Error picking image: $error, $stackTrace');
-    }
-  }
-
-  Future<void> _takePicture(int index) async {
-    try {
-      // Get the available cameras.
-      final List<CameraDescription> cameras = await availableCameras();
-
-      if (cameras.isEmpty) {
-        // Show error to the user.
-        showErrorToast(
-          title: 'No camera found!',
-          description: 'Please check your device',
-        );
-
-        // Log the error.
-        _logger.e('No cameras available');
-        return;
-      }
-
-      final CameraDescription selectedCamera = cameras.firstWhere(
-        (CameraDescription camera) {
-          // Look for the first front-facing camera available.
-          return camera.lensDirection == CameraLensDirection.front;
-        },
-        orElse: () {
-          // No front facing? Just return the first.
-          return cameras.first;
-        },
-      );
-
-      // Create a controller for the selected camera with medium resolution.
-      final CameraController cameraController = CameraController(
-        selectedCamera,
-        ResolutionPreset.medium,
-      );
-
-      // Initialize the controller.
-      await cameraController.initialize();
-
-      if (mounted) {
-        await showModalBottomSheet<Widget>(
-          showDragHandle: true,
-          isScrollControlled: true,
-          context: context,
-          builder: (BuildContext context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // Show a preview of the camera.
-                AspectRatio(
-                  aspectRatio: cameraController.value.aspectRatio,
-                  child: CameraPreview(cameraController),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            // Pop the bottomsheet.
-                            Navigator.pop(context);
-
-                            // Dispose the controller.
-                            cameraController.dispose();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () async {
-                            // Take a picture.
-                            final XFile picture = await cameraController
-                                .takePicture();
-
-                            // Convert image to Uint8List (memory efficient).
-                            final Uint8List imageData = await picture
-                                .readAsBytes();
-
-                            // Update the image in the list.
-                            sImages.value[index] = imageData;
-
-                            // Pop the bottomsheet.
-                            Navigator.pop(context);
-
-                            // Dispose the controller.
-                            await cameraController.dispose();
-                          },
-                          child: const Text('Capture'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } on Exception catch (error, stackTrace) {
-      // Show the error to the user.
-      showErrorToast(
-        title: 'Error taking picture: $error',
-        description: '$stackTrace',
-      );
-
-      // Log the error.
-      _logger.e('Error taking picture: $error, $stackTrace');
-    }
+  @override
+  void initState() {
+    super.initState();
+    _pickImageService = PickImageService();
   }
 
   @override
@@ -176,41 +49,85 @@ class _ImagePickerCarouselState extends State<ImagePickerCarousel> {
           itemExtent: 100,
           shrinkExtent: 80,
           onTap: (int index) {
-            final Uint8List? imageIndex = sImages.watch(context)[index];
+            // Get the image at the tapped index.
+            final Uint8List? imageIndex = sImagesList.watch(context)[index];
             if (imageIndex != null) {
+              // If an image exists, show the modal to change/remove the image.
               showModal(
                 context: context,
                 child: ChangeImageModal(
                   image: imageIndex,
                   index: index,
+
+                  // Callback for removing the image at the current index.
                   onRemove: () {
-                    sImages.value[index] = null;
+                    _pickImageService.updateImageAtIndex(
+                      imageList: sImagesList,
+                      index: index,
+                      image: null,
+                      onImagePathsChanged: widget.onImagePathsChanged,
+                    );
                   },
+
+                  // Callback for changing the image at the current index.
                   onChange: () {
-                    _pickImage(index);
+                    _pickImageService.pickImage(
+                      context: context,
+                      imageList: sImagesList,
+                      index: index,
+                      onImagePathsChanged: widget.onImagePathsChanged,
+                    );
                   },
                 ),
               );
             } else {
+              // If no image exists, show the modal to pick an image or take
+              // a picture.
               showModal(
                 context: context,
                 child: PickImageModal(
                   index: index,
+
+                  // Callback for picking an image from the gallery.
                   onPickImage: () {
-                    _pickImage(index);
+                    _pickImageService.pickImage(
+                      context: context,
+                      imageList: sImagesList,
+                      index: index,
+                      onImagePathsChanged: widget.onImagePathsChanged,
+                    );
                   },
+
+                  // Callback for taking a picture with the camera.
                   onTakePicture: () async {
-                    await _takePicture(index);
+                    await _pickImageService.takePicture(
+                      context: context,
+                      imageList: sImagesList,
+                      index: index,
+                      onImagePathsChanged: widget.onImagePathsChanged,
+                    );
                   },
                 ),
               );
             }
+            // Notify the parent widget that the image paths have changed.
+            // This forces the Signal to update the UI.
+            widget.onImagePathsChanged(
+              sImagesList.value.whereType<Uint8List>().map((_) {
+                return 'image';
+              }).toList(),
+            );
           },
+
+          // Generate 12 widgets for the carousel from the Signal.
           children: List<Widget>.generate(12, (int index) {
-            final Uint8List? imageIndex = sImages.watch(context)[index];
+            final Uint8List? imageIndex = sImagesList.watch(context)[index];
             return imageIndex != null
-                ? Image.memory(imageIndex, fit: BoxFit.cover)
+                ?
+                  // Display an image if available.
+                  Image.memory(imageIndex, fit: BoxFit.cover)
                 : const Center(
+                    // Display an icon if not available.
                     child: FaIcon(FontAwesomeIcons.plus, color: Colors.grey),
                   );
           }),

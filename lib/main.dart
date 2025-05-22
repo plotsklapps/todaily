@@ -21,6 +21,7 @@ class MainEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: cThemeData.watch(context),
         home: const SignInScreen(),
       ),
