@@ -5,7 +5,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
-import 'package:todaily/firebase/firestore_service.dart';
+import 'package:todaily/logic/firestore_service.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/screens/signin_screen.dart';
 import 'package:todaily/state/loading_signal.dart';

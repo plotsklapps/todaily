@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 
 // Signal for the current ThemeMode. Defaults to system.
 final Signal<ThemeMode> sThemeMode = Signal<ThemeMode>(

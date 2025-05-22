@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:todaily/firebase/firestore_service.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/firestore_service.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
 import 'package:todaily/theme/thememode_carousel.dart';

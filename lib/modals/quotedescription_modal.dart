@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 import 'package:todaily/widgets/quote_widget.dart';
 import 'package:url_launcher/link.dart';
 

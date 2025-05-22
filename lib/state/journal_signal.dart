@@ -31,8 +31,8 @@ final Signal<List<Uint8List?>> sImages = Signal<List<Uint8List?>>(
   List<Uint8List?>.filled(12, null),
 );
 
-final Signal<MoodType> sMood = Signal<MoodType>(
-  MoodType.relaxed,
+final Signal<MoodType?> sMood = Signal<MoodType?>(
+  null,
   debugLabel: 'sMood',
 );
 

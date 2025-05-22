@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/firebase/firebase_service.dart';
+import 'package:todaily/logic/firebase_service.dart';
 import 'package:todaily/screens/signin_screen.dart';
 import 'package:todaily/state/loading_signal.dart';
 import 'package:todaily/state/regex_signal.dart';

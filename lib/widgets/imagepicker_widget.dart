@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/logic/pickimage_service.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 import 'package:todaily/modals/changeimage_modal.dart';
 import 'package:todaily/modals/pickimage_modal.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
 import 'package:todaily/widgets/modal_logic.dart';
 
 // A horizontal carousel for selecting and displaying images.

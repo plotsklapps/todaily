@@ -2,7 +2,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 
 final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
   FlexScheme.outerSpace,

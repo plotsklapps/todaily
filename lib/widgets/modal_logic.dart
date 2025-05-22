@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 
 // Custom way to show a modal bottom sheet with a drag handle and
 // scrollable content for all devices.

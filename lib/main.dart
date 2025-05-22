@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'package:todaily/firebase_options.dart';
-import 'package:todaily/screens/signin_screen.dart';
+import 'package:todaily/screens/loading_screen.dart';
 import 'package:todaily/theme/flex_theme.dart';
 
 Future<void> main() async {
@@ -23,7 +23,7 @@ class MainEntry extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: cThemeData.watch(context),
-        home: const SignInScreen(),
+        home: const LoadingScreen(),
       ),
     );
   }

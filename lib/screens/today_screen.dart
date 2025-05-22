@@ -1,9 +1,9 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 import 'package:todaily/state/journal_signal.dart';
 import 'package:todaily/state/now_signal.dart';
 import 'package:todaily/widgets/imagepicker_widget.dart';
@@ -144,24 +144,14 @@ class MoodSelection extends StatelessWidget {
     super.key,
   });
 
-  final MoodType selectedMood;
+  final MoodType? selectedMood;
   final ValueChanged<MoodType> onMoodSelected;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 80,
-      child: ScrollConfiguration(
-        behavior: const ScrollBehavior().copyWith(
-          scrollbars: false,
-          physics: const BouncingScrollPhysics(),
-          dragDevices: <PointerDeviceKind>{
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.trackpad,
-          },
-        ),
+      child: CustomScrollConfiguration(
         child: CarouselView(
           itemExtent: 100,
           shrinkExtent: 80,

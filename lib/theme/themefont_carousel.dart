@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/scrollconfiguration_logic.dart';
+import 'package:todaily/logic/scrollconfiguration_logic.dart';
 
 // Signal for the current font family. Defaults to Questrial.
 final Signal<String> sFont = Signal<String>(

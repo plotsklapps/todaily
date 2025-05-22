@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:todaily/firebase/firebase_service.dart';
+import 'package:todaily/logic/firebase_service.dart';
 import 'package:todaily/logic/modal_logic.dart';
 import 'package:todaily/modals/verifyemail_modal.dart';
 import 'package:todaily/state/loading_signal.dart';
