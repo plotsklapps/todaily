@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todaily/logic/firestore_service.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/screens/signin_screen.dart';
 
@@ -13,17 +16,30 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  final FirestoreService _firestoreService = FirestoreService();
+  StreamSubscription<User?>? _authStateSubscription;
+
   @override
   void initState() {
     super.initState();
-    _checkUserAuthentication();
+    _authStateSubscription = FirebaseAuth.instance.authStateChanges().listen((
+      User? user,
+    ) {
+      _checkUserAuthentication(user: user);
+    });
   }
 
-  Future<void> _checkUserAuthentication() async {
-    await Future<void>.delayed(Duration.zero);
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
 
-    if (FirebaseAuth.instance.currentUser != null) {
-      // User is logged in, navigate to MainScreen
+  Future<void> _checkUserAuthentication({required User? user}) async {
+    if (user != null) {
+      // Load user data.
+      await _firestoreService.loadUserData(user: user);
+      // Navigate to MainScreen.
       if (mounted) {
         await Navigator.pushReplacement(
           context,
@@ -35,17 +51,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
         );
       }
     } else {
-      // User is not logged in, navigate to SignInScreen
-      if (mounted) {
-        await Navigator.pushReplacement(
-          context,
-          MaterialPageRoute<Widget>(
-            builder: (BuildContext context) {
-              return const SignInScreen();
-            },
-          ),
-        );
-      }
+      // Set sSelectedSignInOption Signal to SignIn.
+      sSelectedSignInOption.value = 'SignIn';
+      // Navigate to SignInScreen.
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<Widget>(
+          builder: (BuildContext context) {
+            return const SignInScreen();
+          },
+        ),
+      );
     }
   }
 
