@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:todaily/logic/toast_logic.dart';
 import 'package:todaily/state/loading_signal.dart';
 import 'package:todaily/state/useranon_signal.dart';
 import 'package:todaily/state/useremail_signal.dart';
@@ -11,7 +12,6 @@ import 'package:todaily/state/userverified_signal.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
 import 'package:todaily/theme/thememode_carousel.dart';
-import 'package:todaily/toast.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -41,7 +41,7 @@ class FirestoreService {
         _logger.i('User added to Firestore successfully');
       } on FirebaseAuthException catch (e) {
         // Show a toast to the user and log the error
-        showErrorToast(
+        ToastService.showErrorToast(
           title: 'Error adding user to Firestore!',
           description: '$e',
         );
@@ -51,7 +51,7 @@ class FirestoreService {
       }
     } else {
       // Show a toast to the user and log the error
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error adding user to Firestore!',
         description: 'User is null. Try restarting the app.',
       );
@@ -89,28 +89,31 @@ class FirestoreService {
           }
         } else {
           // Show a toast to the user and log the warning
-          showWarningToast(
+          ToastService.showWarningToast(
             title: 'No user data found!',
             description: 'You have not saved any user data yet.',
           );
           _logger.w('No user found');
         }
         // Show a toast to the user and log the success
-        showSuccessToast(
+        ToastService.showSuccessToast(
           title: 'User data loaded!',
           description: 'Successfully retrieved user data from the cloud.',
         );
         _logger.i('User loaded successfully');
       } on FirebaseException catch (e) {
         // Show a toast to the user and log the error
-        showErrorToast(title: 'Error loading user data!', description: '$e');
+        ToastService.showErrorToast(
+          title: 'Error loading user data!',
+          description: '$e',
+        );
         _logger.e('Error loading user data: $e');
       } finally {
         sLoading.value = false;
       }
     } else {
       // Show a toast to the user and log the error}
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error loading user data!',
         description: 'User is null.',
       );
@@ -141,7 +144,7 @@ class FirestoreService {
             }, SetOptions(merge: true));
 
         // Show a toast to the user and log the success
-        showSuccessToast(
+        ToastService.showSuccessToast(
           title: 'User data saved!',
           description: 'Data successfully transferred to the cloud.',
         );
@@ -153,14 +156,17 @@ class FirestoreService {
         }
       } on FirebaseException catch (e) {
         // Show a toast to the user and log the error
-        showErrorToast(title: 'Error updating user data!', description: '$e');
+        ToastService.showErrorToast(
+          title: 'Error updating user data!',
+          description: '$e',
+        );
         _logger.e('Error updating user data: $e');
       } finally {
         sLoading.value = false;
       }
     } else {
       // Show a toast to the user and log the error
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error saving workout!',
         description: 'User is null. Try restarting the app.',
       );
@@ -196,7 +202,7 @@ class FirestoreService {
         }, SetOptions(merge: true));
 
         // Show a toast to the user and log the success
-        showSuccessToast(
+        ToastService.showSuccessToast(
           title: 'Settings saved!',
           description: 'Data successfully transferred to the cloud.',
         );
@@ -208,14 +214,17 @@ class FirestoreService {
         }
       } on FirebaseException catch (e) {
         // Show a toast to the user and log the error
-        showErrorToast(title: 'Error saving settings!', description: '$e');
+        ToastService.showErrorToast(
+          title: 'Error saving settings!',
+          description: '$e',
+        );
         _logger.e('Error saving settings: $e');
       } finally {
         sLoading.value = false;
       }
     } else {
       // Show a toast to the user and log the error
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error saving settings!',
         description: 'User is null. Try restarting the app.',
       );
@@ -279,7 +288,7 @@ class FirestoreService {
           _logger.i('Settings loaded successfully');
         } else {
           // Show a toast to the user and log the warning
-          showWarningToast(
+          ToastService.showWarningToast(
             title: 'No settings found!',
             description: 'You have not saved any settings yet.',
           );
@@ -287,14 +296,17 @@ class FirestoreService {
         }
       } on FirebaseException catch (e) {
         // Show a toast to the user and log the error
-        showErrorToast(title: 'Error loading settings!', description: '$e');
+        ToastService.showErrorToast(
+          title: 'Error loading settings!',
+          description: '$e',
+        );
         _logger.e('Error loading settings: $e');
       } finally {
         sLoading.value = false;
       }
     } else {
       // Show a toast to the user and log the error
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error loading settings!',
         description: 'User is null. Try restarting the app.',
       );

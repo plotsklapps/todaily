@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:todaily/logic/firestore_service.dart';
+import 'package:todaily/logic/toast_logic.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/screens/signin_screen.dart';
 import 'package:todaily/state/loading_signal.dart';
@@ -16,7 +17,6 @@ import 'package:todaily/state/userverified_signal.dart';
 import 'package:todaily/theme/themecolors_carousel.dart';
 import 'package:todaily/theme/themefont_carousel.dart';
 import 'package:todaily/theme/thememode_carousel.dart';
-import 'package:todaily/toast.dart';
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,7 +49,7 @@ class FirebaseService {
 
       // Log the sign in event, show a toast to the user and log the success
       await FirebaseAnalytics.instance.logLogin(loginMethod: 'anonymous');
-      showSuccessToast(
+      ToastService.showSuccessToast(
         title: 'Anonymous sign in successful!',
         description:
             'Your account is valid for 30 days. Please consider signing '
@@ -70,7 +70,10 @@ class FirebaseService {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       // Show a toast to the user and log the error
-      showErrorToast(title: 'Error signing up!', description: '$error');
+      ToastService.showErrorToast(
+        title: 'Error signing up!',
+        description: '$error',
+      );
       _logger.e('Error signing up: $error, $stackTrace');
 
       // Something went wrong, reset all Signals to default values
@@ -134,7 +137,7 @@ class FirebaseService {
 
       // Log the sign up event, show a toast to the user and log the success
       await FirebaseAnalytics.instance.logSignUp(signUpMethod: 'email');
-      showSuccessToast(
+      ToastService.showSuccessToast(
         title: 'Verification email sent!',
         description:
             'Please check your email to verify your account. '
@@ -158,7 +161,10 @@ class FirebaseService {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       // Show a toast to the user and log the error
-      showErrorToast(title: 'Error signing up!', description: '$error');
+      ToastService.showErrorToast(
+        title: 'Error signing up!',
+        description: '$error',
+      );
       _logger.e('Error signing up: $error, $stackTrace');
     } finally {
       sLoading.value = false;
@@ -184,7 +190,7 @@ class FirebaseService {
       // If the email is NOT verified, run this block
       if (!userCredential.user!.emailVerified) {
         // Show a toast to the user and log the warning
-        showWarningToast(
+        ToastService.showWarningToast(
           title: 'Email not verified!',
           description: 'Please verify your email before signing in.',
         );
@@ -215,7 +221,7 @@ class FirebaseService {
 
         // Log the sign in event, show a toast to the user and log the success
         await FirebaseAnalytics.instance.logLogin(loginMethod: 'email');
-        showSuccessToast(
+        ToastService.showSuccessToast(
           title: 'Sign in successful!',
           description:
               'Welcome '
@@ -237,7 +243,10 @@ class FirebaseService {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       // Show a toast to the user and log the error
-      showErrorToast(title: 'Error signing in!', description: '$error');
+      ToastService.showErrorToast(
+        title: 'Error signing in!',
+        description: '$error',
+      );
       _logger.e('Error signing in: $error, $stackTrace');
     } finally {
       sLoading.value = false;
@@ -261,7 +270,7 @@ class FirebaseService {
 
       // Log the event, show a toast to the user and log the success
       await FirebaseAnalytics.instance.logEvent(name: 'sign_out');
-      showSuccessToast(
+      ToastService.showSuccessToast(
         title: 'Sign out successful!',
         description: 'You have been signed out',
       );
@@ -280,7 +289,10 @@ class FirebaseService {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       // Show a toast to the user and log the error
-      showErrorToast(title: 'Error signing out!', description: '$error');
+      ToastService.showErrorToast(
+        title: 'Error signing out!',
+        description: '$error',
+      );
       _logger.e('Error signing out: $error, $stackTrace');
     } finally {
       sLoading.value = false;
@@ -303,7 +315,7 @@ class FirebaseService {
         name: 'password_reset',
         parameters: <String, Object>{'email': email.trim()},
       );
-      showSuccessToast(
+      ToastService.showSuccessToast(
         title: 'Password reset email sent!',
         description:
             'Please check your email to reset your password. '
@@ -328,7 +340,7 @@ class FirebaseService {
       }
     } on FirebaseAuthException catch (error, stackTrace) {
       // Show a toast to the user and log the error
-      showErrorToast(
+      ToastService.showErrorToast(
         title: 'Error sending password reset email!',
         description: '$error',
       );
