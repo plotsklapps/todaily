@@ -9,6 +9,7 @@ import 'package:todaily/logic/firestore_service.dart';
 import 'package:todaily/logic/toast_logic.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/screens/signin_screen.dart';
+import 'package:todaily/screens/verification_screen.dart';
 import 'package:todaily/state/loading_signal.dart';
 import 'package:todaily/state/useranon_signal.dart';
 import 'package:todaily/state/useremail_signal.dart';
@@ -154,7 +155,7 @@ class FirebaseService {
           context,
           MaterialPageRoute<Widget>(
             builder: (BuildContext context) {
-              return const SignInScreen();
+              return const VerificationScreen();
             },
           ),
         );

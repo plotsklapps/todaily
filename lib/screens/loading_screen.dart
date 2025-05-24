@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todaily/logic/firestore_service.dart';
+import 'package:todaily/logic/toast_logic.dart';
 import 'package:todaily/screens/main_screen.dart';
 import 'package:todaily/screens/signin_screen.dart';
+import 'package:todaily/screens/verification_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -36,7 +38,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> _checkUserAuthentication({required User? user}) async {
-    if (user != null) {
+    if (user != null && user.emailVerified) {
       // Load user data.
       await _firestoreService.loadUserData(user: user);
       // Navigate to MainScreen.
@@ -50,9 +52,22 @@ class _LoadingScreenState extends State<LoadingScreen> {
           ),
         );
       }
+    } else if (user != null && !user.emailVerified) {
+      ToastService.showWarningToast(
+        title: 'Email not verified',
+        description:
+            'Please check your email to continue. Consider checking your spam folder.',
+      );
+      // Navigate to SignInScreen.
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute<Widget>(
+          builder: (BuildContext context) {
+            return const VerificationScreen();
+          },
+        ),
+      );
     } else {
-      // Set sSelectedSignInOption Signal to SignIn.
-      sSelectedSignInOption.value = 'SignIn';
       // Navigate to SignInScreen.
       await Navigator.pushReplacement(
         context,
