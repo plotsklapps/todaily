@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/logic/scrollconfiguration_logic.dart';
+import 'package:todaily/services/gemini_service.dart';
 import 'package:todaily/state/journal_signal.dart';
 import 'package:todaily/state/now_signal.dart';
 import 'package:todaily/widgets/imagepicker_widget.dart';
@@ -21,6 +22,8 @@ class TodayScreen extends StatefulWidget {
 class _TodayScreenState extends State<TodayScreen> {
   final Now now = Now();
   final TextEditingController _titleController = TextEditingController();
+  final GeminiService _geminiService =
+      GeminiService(); // Create an instance of GeminiService
   final TextEditingController _descriptionController = TextEditingController();
 
   @override
@@ -48,12 +51,34 @@ class _TodayScreenState extends State<TodayScreen> {
             const QuoteWidget(),
             DateTimeRow(now: now),
             const SizedBox(height: 8),
-            CustomTextField(
-              controller: _titleController,
-              label: "today's title",
-              onChanged: (String title) {
-                sTitle.value = title;
-              },
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: CustomTextField(
+                    controller: _titleController,
+                    label: "today's title",
+                    onChanged: (String title) {
+                      sTitle.value = title;
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.auto_awesome),
+                  onPressed: () {
+                    final String description = _descriptionController.text
+                        .trim();
+                    if (description.isNotEmpty) {
+                      _geminiService
+                          .generateTitleFromDescription(description)
+                          .then((String? generatedTitle) {
+                            if (generatedTitle != null) {
+                              _titleController.text = generatedTitle;
+                            }
+                          });
+                    }
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             CustomTextField(
