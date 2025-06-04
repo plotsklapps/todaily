@@ -20,7 +20,7 @@ class GeminiService {
 
     try {
       // Create a prompt for the model
-      final prompt =
+      final String prompt =
           'Generate a single, concise title for the following journal entry summary. Provide only the title and nothing else:\n$description';
 
       // Send the prompt to the model and get the response

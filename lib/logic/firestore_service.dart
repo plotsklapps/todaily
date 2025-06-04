@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:todaily/logic/toast_logic.dart';
+import 'package:todaily/state/journal_signal.dart';
 import 'package:todaily/state/loading_signal.dart';
 import 'package:todaily/state/useranon_signal.dart';
 import 'package:todaily/state/useremail_signal.dart';
@@ -311,6 +313,56 @@ class FirestoreService {
         description: 'User is null. Try restarting the app.',
       );
       _logger.e('User is null');
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  Future<void> addToday({
+    required String title,
+    required String description,
+    required String mood,
+  }) async {
+    sLoading.value = true;
+
+    try {
+      // Get the current date and format it as YYYYMMDD
+      final DateTime now = DateTime.now();
+      final DateFormat formatter = DateFormat('yyyyMMdd');
+      final String todayDateString = formatter.format(now);
+
+      // Get the user's UID
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final CollectionReference<Map<String, dynamic>> userJournalsCollection =
+            _firestore
+                .collection('users')
+                .doc(user.uid) // Use the user's UID
+                .collection('journals');
+
+        await userJournalsCollection.doc(todayDateString).set(<String, dynamic>{
+          'title': title,
+          'description': description,
+          'mood': mood,
+        }, SetOptions(merge: true));
+
+        _logger.i("Today's entry added to Firestore: $todayDateString");
+      } else {
+        ToastService.showErrorToast(
+          title: 'User is NULL',
+          description:
+              'You do not seem to be signed in, please restart the app.',
+        );
+        _logger.e('User is null');
+      }
+    } on FirebaseException catch (e) {
+      ToastService.showErrorToast(
+        title: "Error adding today's entry!",
+        description: '$e',
+      );
+      _logger.e("Error adding today's entry: $e");
+    } finally {
+      sLoading.value = false;
     }
   }
 }
